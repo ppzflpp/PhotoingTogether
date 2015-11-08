@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">一张</string>
+    <string name="error_data">数据异常</string>
+    <string name="error_email_used">邮箱已被使用</string>
+    <string name="error_mail_format">邮箱格式不正确</string>
+    <string name="error_network_timeout">网络超时</string>
+    <string name="error_nick_null">昵称不能为空</string>
+    <string name="error_no_network">无网络连接，请检查您的手机网络。</string>
+    <string name="error_password_different">前后密码不一致</string>
+    <string name="error_password_length">密码不能少于6位</string>
+    <string name="error_username_password_error">用户名或密码错误</string>
+    <string name="error_username_password_incorrect">用户名或密码错误</string>
+    <string name="error_username_used">用户名已被使用</string>
+    <string name="file_not_existed">文件不存在</string>
+    <string name="find_password">找回密码</string>
+    <string name="confirm">确定</string>
+    <string name="cancel">取消</string>
+    <string name="reset_password_2">邮箱进行密码重置操作</string>
+    <string name="reset_password_1">重置密码请求成功，请到</string>
+    <string name="login">登录</string>
+    <string name="register">注册</string>
+    <string name="unnamed">未命名</string>
+    <string name="forget_password">忘记密码？</string>
+    <string name="send_email_2">" 发送了验证邮件，请及时进行验证"</string>
+    <string name="send_email_1">"我们向您 "</string>
+</resources>
