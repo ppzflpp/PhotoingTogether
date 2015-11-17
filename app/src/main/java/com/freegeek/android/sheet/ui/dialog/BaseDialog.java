@@ -6,15 +6,17 @@ import android.support.annotation.NonNull;
 
 import com.freegeek.android.sheet.R;
 import com.freegeek.android.sheet.activity.BaseActivity;
+import com.freegeek.android.sheet.bean.User;
 import com.freegeek.android.sheet.util.APP;
 import com.rey.material.app.Dialog;
+
+import cn.bmob.v3.BmobUser;
 
 /**
  * Created by rtugeek@gmail.com on 2015/11/7.
  */
 public class BaseDialog extends Dialog
 {
-
 
     private BaseActivity context;
     protected SharedPreferences sp;
@@ -48,5 +50,9 @@ public class BaseDialog extends Dialog
 
     public BaseActivity getActivity(){
         return context;
+    }
+
+    protected User getCurrentUser(){
+        return BmobUser.getCurrentUser(getActivity(),User.class);
     }
 }

@@ -5,9 +5,11 @@ import android.support.design.widget.TextInputLayout;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.freegeek.android.sheet.R;
 import com.freegeek.android.sheet.activity.BaseActivity;
@@ -19,6 +21,8 @@ import com.freegeek.android.sheet.util.StringUtil;
 import com.orhanobut.logger.Logger;
 import com.rey.material.app.Dialog;
 import com.umeng.analytics.MobclickAgent;
+
+import org.json.JSONObject;
 
 import cn.bmob.v3.listener.SaveListener;
 import de.greenrobot.event.EventBus;
@@ -170,12 +174,17 @@ public class LoginDialog extends Dialog {
 
     }
 
+    /**
+     * 获取用户
+     * @return
+     */
     public User getUser(){
         User user = new User();
         user.setUsername(username.getText().toString().trim().toLowerCase());
         user.setPassword(StringUtil.MD5(password.getText().toString()));
         return user;
     }
+
 
 
 }

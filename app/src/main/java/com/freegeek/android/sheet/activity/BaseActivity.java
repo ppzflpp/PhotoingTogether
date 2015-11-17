@@ -49,6 +49,8 @@ public class BaseActivity extends AppCompatActivity {
         return this;
     }
 
+
+
     public void showToast(int id){
         mSnackBar.text(getString(id)).show(this);
     }

@@ -2,6 +2,7 @@ package com.freegeek.android.sheet;
 
 import android.app.Application;
 
+import com.baidu.mapapi.SDKInitializer;
 import com.freegeek.android.sheet.util.APP;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator;
@@ -61,6 +62,9 @@ public class MyApplication extends Application {
                 .writeDebugLogs()
                 .build();
         ImageLoader.getInstance().init(config);
+
+        //百度地图
+        SDKInitializer.initialize(getApplicationContext());
     }
 
 

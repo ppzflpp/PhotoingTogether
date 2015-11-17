@@ -1,0 +1,127 @@
+package com.freegeek.android.sheet.ui.dialog;
+
+import android.graphics.Bitmap;
+import android.media.Image;
+import android.support.design.widget.TextInputLayout;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
+
+import com.freegeek.android.sheet.R;
+import com.freegeek.android.sheet.activity.BaseActivity;
+import com.freegeek.android.sheet.bean.Event;
+import com.freegeek.android.sheet.bean.Sheet;
+import com.freegeek.android.sheet.bean.User;
+import com.freegeek.android.sheet.util.BitmapUtil;
+import com.freegeek.android.sheet.util.EventLog;
+import com.freegeek.android.sheet.util.FileUtil;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+import com.orhanobut.logger.Logger;
+
+import java.io.File;
+
+import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.datatype.BmobFile;
+import cn.bmob.v3.listener.SaveListener;
+import cn.bmob.v3.listener.UploadFileListener;
+import de.greenrobot.event.EventBus;
+
+
+/**
+ * Created by rtugeek@gmail.com on 2015/11/11.
+ */
+public class SheetDialog extends BaseDialog {
+    private TextInputLayout mThoughtInput;
+    private EditText mEditText;
+    private ImageView mImageView;
+    public SheetDialog(BaseActivity context,final File localImage) {
+        super(context);
+        View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_push_sheet,null);
+        mThoughtInput = (TextInputLayout)view.findViewById(R.id.dialog_input_thought);
+
+        mThoughtInput.setHint(getString(R.string.Thought));
+        mThoughtInput.setCounterEnabled(true);
+        mThoughtInput.setCounterMaxLength(140);
+
+        mEditText = mThoughtInput.getEditText();
+
+        Logger.i(localImage.getPath());
+
+        mImageView= (ImageView)view.findViewById(R.id.dialog_img_sheet_img);
+        ImageLoader.getInstance().loadImage("file://" + localImage.getAbsolutePath(), BitmapUtil.getImageDisplayOption(), new ImageLoadingListener() {
+            @Override
+            public void onLoadingStarted(String imageUri, View view) {
+
+            }
+
+            @Override
+            public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+
+            }
+
+            @Override
+            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                mImageView.setImageBitmap(loadedImage);
+            }
+
+            @Override
+            public void onLoadingCancelled(String imageUri, View view) {
+
+            }
+        });
+
+        setContentView(view);
+
+        negativeAction(getString(R.string.cancel));
+        positiveAction(getString(R.string.confirm));
+
+        negativeActionClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
+
+        positiveActionClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                File file = BitmapUtil.getZipImageFile(localImage.getAbsolutePath(),System.currentTimeMillis()+"");
+                final BmobFile bmobFile = new BmobFile(file);
+                showLoading();
+                bmobFile.uploadblock(getActivity(), new UploadFileListener() {
+                    @Override
+                    public void onSuccess() {
+                        Sheet sheet = new Sheet();
+                        sheet.setAuthor(getCurrentUser());
+                        sheet.setContent(mEditText.getText().toString());
+                        sheet.setPicture(bmobFile);
+                        sheet.save(getActivity(), new SaveListener() {
+                            @Override
+                            public void onSuccess() {
+                                dismissLoading();
+                                dismiss();
+                                EventBus.getDefault().post(new Event(Event.EVENT_PUSH_SHEET));
+                            }
+
+                            @Override
+                            public void onFailure(int i, String s) {
+                                Logger.i(s);
+                                EventLog.BmobToastError(i,getActivity());
+                                dismissLoading();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onFailure(int i, String s) {
+                        dismissLoading();
+                    }
+                });
+            }
+        });
+    }
+
+
+}

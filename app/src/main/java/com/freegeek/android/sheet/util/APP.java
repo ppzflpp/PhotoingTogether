@@ -16,4 +16,13 @@ public class APP {
     public static final class KEY{
         public static final String USERNAME = "USERNAME";
     }
+
+    public static final class REQUEST{
+        public static final int CODE_CAMERA = 1000;
+        public static final int CODE_PICK_PICTURE = 1001;
+    }
+
+    public static final class EXTRA{
+        public static final String FILE_NAME = "EXTRA_FILE_NAME";
+    }
 }

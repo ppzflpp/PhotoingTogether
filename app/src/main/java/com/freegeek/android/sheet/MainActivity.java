@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
@@ -17,8 +15,12 @@ import com.freegeek.android.sheet.activity.BaseActivity;
 import com.freegeek.android.sheet.bean.Event;
 import com.freegeek.android.sheet.bean.User;
 import com.freegeek.android.sheet.fragment.BaseFragment;
+import com.freegeek.android.sheet.fragment.LocationFragment;
 import com.freegeek.android.sheet.fragment.ProfileFragment;
+import com.freegeek.android.sheet.fragment.SheetFragment;
 import com.freegeek.android.sheet.ui.dialog.LoginDialog;
+import com.freegeek.android.sheet.ui.dialog.SheetDialog;
+import com.freegeek.android.sheet.util.APP;
 import com.freegeek.android.sheet.util.EventLog;
 import com.freegeek.android.sheet.util.FileUtil;
 import com.mikepenz.materialdrawer.AccountHeader;
@@ -38,6 +40,7 @@ import com.orhanobut.logger.Logger;
 import com.soundcloud.android.crop.Crop;
 
 import java.io.File;
+import java.net.URI;
 
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobFile;
@@ -53,6 +56,8 @@ public class MainActivity extends BaseActivity {
     private AccountHeader mHeaderResult;
     private IProfile iProfile;
     private ProfileFragment mProfileFragment;
+    private SheetFragment mSheetFragment;
+    private LocationFragment mLocationFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,23 +66,17 @@ public class MainActivity extends BaseActivity {
         mToolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
         setSupportActionBar(mToolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_SHORT)
-                        .setAction("Action", null).show();
-            }
-        });
-
         mUser = BmobUser.getCurrentUser(this, User.class);
         initFragments();
         initDrawerNavigation();
         refreshUser();
+        replaceFragment(mSheetFragment);
     }
 
     private void initFragments(){
         mProfileFragment = new ProfileFragment();
+        mSheetFragment = new SheetFragment();
+        mLocationFragment = new LocationFragment();
     }
 
 
@@ -141,6 +140,7 @@ public class MainActivity extends BaseActivity {
                         if (mUser == null) {
                             switch (position) {
                                 case 1:
+                                    replaceFragment(mLocationFragment);
                                 case 3:
                                 case 4:
                                     showToast(R.string.not_logined_in);
@@ -204,6 +204,7 @@ public class MainActivity extends BaseActivity {
         loginDialog.show();
     }
 
+    private String mPhotoName;
     public void onEvent(Event event){
         switch (event.getEventCode()){
             case Event.EVENT_USER_SIGN_IN:
@@ -212,6 +213,9 @@ public class MainActivity extends BaseActivity {
                 break;
             case Event.EVENT_USER_SIGN_OUT:
                 refreshUser();
+                break;
+            case Event.EVENT_GET_CAMERA_SHEET_PHOTO:
+                mPhotoName = event.getTag().toString();
                 break;
         }
     }
@@ -232,6 +236,7 @@ public class MainActivity extends BaseActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_homepage) {
+            replaceFragment(mSheetFragment);
             return true;
         }
 
@@ -277,6 +282,7 @@ public class MainActivity extends BaseActivity {
                     public void onSuccess() {
                         //删除旧头像
                         if(mUser.getAvatar()!=null) {mUser.getAvatar().delete(getActivity());}
+
                         mUser.setAvatar(bmobFile);
                         mUser.update(getActivity(), mUser.getObjectId(), new UpdateListener() {
                             @Override
@@ -300,8 +306,24 @@ public class MainActivity extends BaseActivity {
                     }
                 });
                 break;
+            case APP.REQUEST.CODE_CAMERA:
+                    File file1= FileUtil.getImageFile(mPhotoName);
+                    SheetDialog sheetDialog =new SheetDialog(this,file1);
+                    sheetDialog.show();
+                    sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file1)));
+                break;
+            case APP.REQUEST.CODE_PICK_PICTURE:
+                if(result!=null){
+                    File file2 = FileUtil.getFileByUri(this, result.getData());
+                    if(file2!=null){
+                        SheetDialog sheetDialog2 =new SheetDialog(this,file2);
+                        sheetDialog2.show();
+                    }
+                }
+                break;
         }
     }
+
 
 
 

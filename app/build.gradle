@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.freegeek.android.sheet"
-        minSdkVersion 11
+        minSdkVersion 14
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -15,6 +15,15 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    signingConfigs {
+        debug {
+            storeFile file('C:/Users/rtuge/Desktop/workspace/Github/Sheet/release.keystore')
+            storePassword "47328663."
+            keyAlias "androidreleasekey"
+            keyPassword "47328663."
         }
     }
 }
@@ -47,4 +56,6 @@ dependencies {
     compile 'com.android.support:cardview-v7:23.1.0'
     compile 'com.github.siyamed:android-shape-imageview:0.9.+@aar'
     compile 'com.soundcloud.android:android-crop:1.0.1@aar'
+    compile 'com.gordonwong:material-sheet-fab:1.2'
+    compile 'com.github.dexafree:materiallist:3.1.1'
 }

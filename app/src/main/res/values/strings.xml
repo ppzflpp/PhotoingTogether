@@ -27,4 +27,7 @@
     <string name="homepage">主页</string>
     <string name="input_your_email">请输入您的邮箱</string>
     <string name="this_mail_not_be_used">该邮箱没有被使用！</string>
+    <string name="gallery">相册</string>
+    <string name="camera">相机</string>
+    <string name="Thought">说说你此刻的感想:</string>
 </resources>

@@ -12,9 +12,11 @@ import android.view.ViewGroup;
 
 import com.freegeek.android.sheet.activity.BaseActivity;
 import com.freegeek.android.sheet.bean.Event;
+import com.freegeek.android.sheet.bean.User;
 
 import java.util.List;
 
+import cn.bmob.v3.BmobUser;
 import de.greenrobot.event.EventBus;
 
 /**
@@ -81,5 +83,13 @@ public class BaseFragment extends Fragment {
 
         }
         return null;
+    }
+
+    protected View findViewById(int id){
+        return  getView().findViewById(id);
+    }
+
+    protected User getCurrentUser(){
+        return BmobUser.getCurrentUser(getActivity(),User.class);
     }
 }

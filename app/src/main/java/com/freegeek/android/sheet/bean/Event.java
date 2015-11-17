@@ -10,6 +10,8 @@ public class Event {
     public static final int EVENT_USER_SIGN_UP = 2;//注册
     public static final int EVENT_USER_SIGN_OUT = 2;//注销
     public static final int EVENT_USER_PROFILE_UPDATE = 4;//注销
+    public static final int EVENT_GET_CAMERA_SHEET_PHOTO = 5;//通过相机发布图片
+    public static final int EVENT_PUSH_SHEET = 6;//发布了一张
     public Event(int eventCode) {
         this.eventCode = eventCode;
     }

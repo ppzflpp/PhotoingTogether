@@ -36,7 +36,6 @@ public class FindPasswordDialog extends BaseDialog {
         mEmailInput.setHint(getString(R.string.input_your_email));
 
         etxMail = mEmailInput.getEditText();
-
         contentView(findPasswordView);
 
         title(context.getString(R.string.find_password));
