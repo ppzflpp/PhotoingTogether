@@ -6,7 +6,7 @@
     tools:context="com.freegeek.android.sheet.fragment.SheetFragment">
 
 
-    <com.dexafree.materialList.view.MaterialListView
+    <com.freegeek.android.sheet.ui.MyMaterialList
         app:column_count_portrait="2"
         app:column_count_landscape="3"
         android:layout_width="fill_parent"

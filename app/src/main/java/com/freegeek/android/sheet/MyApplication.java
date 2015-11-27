@@ -2,8 +2,11 @@ package com.freegeek.android.sheet;
 
 import android.app.Application;
 
+import com.baidu.location.BDLocation;
 import com.baidu.mapapi.SDKInitializer;
+import com.freegeek.android.sheet.bean.User;
 import com.freegeek.android.sheet.util.APP;
+import com.freegeek.android.sheet.util.EventLog;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator;
 import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
@@ -21,15 +24,21 @@ import com.umeng.analytics.AnalyticsConfig;
 import java.io.File;
 
 import cn.bmob.v3.Bmob;
+import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.datatype.BmobGeoPoint;
+import cn.bmob.v3.listener.UpdateListener;
 
 /**
  * Created by rtugeek@gmail.com on 2015/11/3.
  */
 public class MyApplication extends Application {
-
+    public static BmobGeoPoint location;
+    public static User currentUser;
+    public static MyApplication instance;
     @Override
     public void onCreate() {
         super.onCreate();
+        instance = this;
         Logger
                 .init(getString(R.string.app_name))                 // default PRETTYLOGGER or use just init()
                 .hideThreadInfo()               // default shown
@@ -65,7 +74,28 @@ public class MyApplication extends Application {
 
         //百度地图
         SDKInitializer.initialize(getApplicationContext());
+        location = new BmobGeoPoint();
+
+        currentUser = BmobUser.getCurrentUser(this,User.class);
     }
 
+    /**
+     * 更新用户地理位置
+     */
+    public static void updateUserLocation(){
+        if(currentUser !=null && location != null){
+            currentUser.setLocation(location);
+            currentUser.update(instance, currentUser.getObjectId(), new UpdateListener() {
+                @Override
+                public void onSuccess() {
+                    Logger.i("UPDATE USER LOCATION SUCCEED!");
+                }
 
+                @Override
+                public void onFailure(int i, String s) {
+                    Logger.i(s);
+                }
+            });
+        }
+    }
 }

@@ -2,6 +2,7 @@ package com.freegeek.android.sheet.bean;
 
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobFile;
+import cn.bmob.v3.datatype.BmobGeoPoint;
 import cn.bmob.v3.datatype.BmobRelation;
 
 /**
@@ -14,6 +15,15 @@ public class User extends BmobUser {
     private BmobFile avatar;
     private BmobRelation fans;
     private BmobRelation follow;
+    private BmobGeoPoint location;
+
+    public BmobGeoPoint getLocation() {
+        return location;
+    }
+
+    public void setLocation(BmobGeoPoint location) {
+        this.location = location;
+    }
 
     public String getNick() {
         return nick;

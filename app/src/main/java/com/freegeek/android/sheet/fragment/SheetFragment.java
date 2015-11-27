@@ -16,6 +16,7 @@ import com.freegeek.android.sheet.R;
 import com.freegeek.android.sheet.bean.Event;
 import com.freegeek.android.sheet.bean.Sheet;
 import com.freegeek.android.sheet.ui.MyFab;
+import com.freegeek.android.sheet.ui.MyMaterialList;
 import com.freegeek.android.sheet.util.APP;
 import com.freegeek.android.sheet.util.EventLog;
 import com.freegeek.android.sheet.util.FileUtil;
@@ -57,7 +58,7 @@ public class SheetFragment extends BaseFragment {
     }
 
 
-    private MaterialListView mListView;
+    private MyMaterialList mListView;
     private void initView(View view){
         MyFab fab = (MyFab) view.findViewById(R.id.fab);
         View sheetView = view.findViewById(R.id.fab_sheet);
@@ -67,7 +68,7 @@ public class SheetFragment extends BaseFragment {
         materialSheetFab = new MaterialSheetFab<>(fab, sheetView, overlay,
                 sheetColor, fabColor);
 
-        mListView = (MaterialListView)view. findViewById(R.id.material_listview);
+        mListView = (MyMaterialList)view. findViewById(R.id.material_listview);
 
         sheetView.findViewById(R.id.fab_item_camera).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,9 +109,8 @@ public class SheetFragment extends BaseFragment {
                     Card card = new Card.Builder(getActivity())
                             .setTag("BIG_IMAGE_CARD")
                             .withProvider(new CardProvider())
-                            .setLayout(R.layout.material_big_image_card_layout)
+                            .setLayout(R.layout.list_item_sheet)
                             .setTitle(sheet.getContent())
-                            .setSubtitle(sheet.getContent())
                             .setDrawable(sheet.getPicture().getFileUrl(getActivity()))
                             .setDrawableConfiguration(new CardProvider.OnImageConfigListener() {
                                 @Override
