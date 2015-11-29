@@ -16,6 +16,15 @@ public class User extends BmobUser {
     private BmobRelation fans;
     private BmobRelation follow;
     private BmobGeoPoint location;
+    private String  locationName;
+
+    public String getLocationName() {
+        return locationName;
+    }
+
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
+    }
 
     public BmobGeoPoint getLocation() {
         return location;

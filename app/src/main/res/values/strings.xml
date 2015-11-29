@@ -26,9 +26,13 @@
     <string name="nick_max_length">最多为15个字符</string>
     <string name="homepage">主页</string>
     <string name="input_your_email">请输入您的邮箱</string>
-    <string name="this_mail_not_be_used">该邮箱没有被使用！</string>
     <string name="gallery">相册</string>
     <string name="camera">相机</string>
     <string name="Thought">说说你此刻的感想:</string>
     <string name="title_activity_new_sheet">NewSheetActivity</string>
+    <string name="title_activity_pick_location">Location</string>
+    <string name="Location">定位</string>
+    <string name="this_mail_not_be_used">Mail in</string>
+    <string name="refresh">刷新</string>
+    <string name="tip_location">长按图标可拖动修改定位地址.</string>
 </resources>

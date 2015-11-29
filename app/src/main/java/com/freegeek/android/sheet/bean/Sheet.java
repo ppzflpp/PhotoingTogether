@@ -9,14 +9,22 @@ import cn.bmob.v3.datatype.BmobRelation;
  * Created by rtugeek@gmail.com on 2015/11/6.
  */
 public class Sheet extends BmobObject {
-
     private BmobFile picture;
     private String content;
     private User author;
     private BmobRelation liker;
     private BmobRelation comment;
     private BmobGeoPoint location;
+    private String locationName;
     private Integer report;
+
+    public String getLocationName() {
+        return locationName;
+    }
+
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
+    }
 
     public BmobFile getPicture() {
         return picture;

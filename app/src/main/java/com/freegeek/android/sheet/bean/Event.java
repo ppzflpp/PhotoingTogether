@@ -6,13 +6,34 @@ package com.freegeek.android.sheet.bean;
 public class Event {
     private Object tag;
     private int eventCode;
-    public static final int EVENT_USER_SIGN_IN = 1;//登录
-    public static final int EVENT_USER_SIGN_UP = 2;//注册
-    public static final int EVENT_USER_SIGN_OUT = 2;//注销
-    public static final int EVENT_USER_PROFILE_UPDATE = 4;//注销
-    public static final int EVENT_GET_CAMERA_SHEET_PHOTO = 5;//通过相机发布图片
-    public static final int EVENT_PUSH_SHEET = 6;//发布了一张
-    public static final int EVENT_GET_LOCATION = 7;//获取到地理位置
+    /**
+     * 登陆
+     */
+    public static final int EVENT_USER_SIGN_IN = 1;
+    /**
+     * 注册
+     */
+    public static final int EVENT_USER_SIGN_UP = 2;
+    /**
+     * 注销
+     */
+    public static final int EVENT_USER_SIGN_OUT = 2;
+    /**
+     *用户更新资料
+     */
+    public static final int EVENT_USER_PROFILE_UPDATE = 4;
+    /**
+     *通过相机发布图片
+     */
+    public static final int EVENT_GET_CAMERA_SHEET_PHOTO = 5;
+    /**
+     *发布了一张新照片
+     */
+    public static final int EVENT_PUSH_SHEET = 6;
+    /**
+     *获取到地理位置
+     */
+    public static final int EVENT_GET_LOCATION = 7;
     public Event(int eventCode) {
         this.eventCode = eventCode;
     }

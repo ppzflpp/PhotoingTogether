@@ -24,4 +24,7 @@
     <string name="forget_password">忘记密码？</string>
     <string name="send_email_2">" 发送了验证邮件，请及时进行验证"</string>
     <string name="send_email_1">"我们向您 "</string>
+    <string name="title_activity_pick_location">定位</string>
+    <string name="title_activity_new_sheet"></string>
+    <string name="this_mail_not_be_used">该邮箱没有被使用！</string>
 </resources>

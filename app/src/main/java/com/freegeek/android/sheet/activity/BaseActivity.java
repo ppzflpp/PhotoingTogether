@@ -1,6 +1,8 @@
 package com.freegeek.android.sheet.activity;
 
 import android.app.Activity;
+import android.app.Service;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -9,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.freegeek.android.sheet.R;
 import com.freegeek.android.sheet.bean.Event;
+import com.freegeek.android.sheet.service.LocationService;
 import com.freegeek.android.sheet.ui.dialog.LoadingDialog;
 import com.freegeek.android.sheet.util.APP;
 import com.orhanobut.logger.Logger;
@@ -50,7 +53,6 @@ public class BaseActivity extends AppCompatActivity {
     }
 
 
-
     public void showToast(int id){
         mSnackBar.text(getString(id)).show(this);
     }
@@ -70,5 +72,13 @@ public class BaseActivity extends AppCompatActivity {
 
     public FragmentTransaction getFragmentTransaction(){
         return getSupportFragmentManager().beginTransaction();
+    }
+
+    protected void startActivity(Class<?> activity){
+        startActivity(new Intent(this,activity));
+    }
+
+    protected void startService(Class<?> service){
+        startService(new Intent(this, service));
     }
 }

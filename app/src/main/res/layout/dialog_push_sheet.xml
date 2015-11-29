@@ -27,5 +27,24 @@
             android:id="@+id/dialog_img_sheet_img"
              />
 
+        <LinearLayout
+            android:layout_below="@id/dialog_input_thought"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:id="@+id/dialog_linear_location">
+            <ImageView
+                android:src="@drawable/ic_location_on_grey_24dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp" />
+            <TextView
+                android:text="定位"
+                android:textAppearance="@android:style/TextAppearance.Medium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/dialog_txt_location" />
+        </LinearLayout>
+
     </RelativeLayout>
 </LinearLayout>

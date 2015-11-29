@@ -32,7 +32,7 @@ import cn.bmob.v3.listener.UpdateListener;
  * Created by rtugeek@gmail.com on 2015/11/3.
  */
 public class MyApplication extends Application {
-    public static BmobGeoPoint location;
+    public static BDLocation location;
     public static User currentUser;
     public static MyApplication instance;
     @Override
@@ -74,7 +74,6 @@ public class MyApplication extends Application {
 
         //百度地图
         SDKInitializer.initialize(getApplicationContext());
-        location = new BmobGeoPoint();
 
         currentUser = BmobUser.getCurrentUser(this,User.class);
     }
@@ -84,7 +83,10 @@ public class MyApplication extends Application {
      */
     public static void updateUserLocation(){
         if(currentUser !=null && location != null){
-            currentUser.setLocation(location);
+            BmobGeoPoint bmobGeoPoint = new BmobGeoPoint();
+            bmobGeoPoint.setLongitude(location.getLongitude());
+            bmobGeoPoint.setLatitude(location.getLatitude());
+            currentUser.setLocation(bmobGeoPoint);
             currentUser.update(instance, currentUser.getObjectId(), new UpdateListener() {
                 @Override
                 public void onSuccess() {
