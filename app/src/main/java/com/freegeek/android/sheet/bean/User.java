@@ -11,7 +11,10 @@ import cn.bmob.v3.datatype.BmobRelation;
 public class User extends BmobUser {
     private String nick;
     private BmobRelation like;
-    private Boolean sex;
+    /**
+     * true 男 false 女
+     */
+    private Boolean sex = true;
     private BmobFile avatar;
     private BmobRelation fans;
     private BmobRelation follow;

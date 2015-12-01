@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
@@ -60,11 +61,10 @@ public class MainActivity extends BaseActivity {
     private Toolbar mToolbar;
     private User mUser;
     private AccountHeader mHeaderResult;
-    private IProfile iProfile;
     private ProfileFragment mProfileFragment;
     private SheetFragment mSheetFragment;
     private LocationFragment mLocationFragment;
-
+    private SheetDialog mSheetDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +81,6 @@ public class MainActivity extends BaseActivity {
         replaceFragment(mSheetFragment);
 
         LocationService.getInstance(this).getLocation();
-        startActivity(PickLocationActivity.class);
     }
 
     private void initFragments(){
@@ -95,7 +94,7 @@ public class MainActivity extends BaseActivity {
      * 初始化抽屉导航
      */
     private void initDrawerNavigation() {
-        iProfile = new ProfileDrawerItem().withName(getString(R.string.not_logined_in))
+        IProfile iProfile = new ProfileDrawerItem().withName(getString(R.string.not_logined_in))
                 .withEmail(getString(R.string.tab_here_get_more_fun))
                 .withIcon(getResources().getDrawable(R.drawable.avatar));
         mHeaderResult = new AccountHeaderBuilder()
@@ -186,10 +185,11 @@ public class MainActivity extends BaseActivity {
 
     private void refreshUser(){
         mUser = BmobUser.getCurrentUser(this,User.class);
+        mHeaderResult.removeProfile(0);
         if(mUser !=null){
-            iProfile.withName(mUser.getNick());
-            iProfile.withEmail(mUser.getEmail());
-            iProfile.withIcon(getResources().getDrawable(R.drawable.avatar));
+            IProfile iProfile = new ProfileDrawerItem().withName(mUser.getNick())
+                    .withEmail(mUser.getEmail())
+                    .withIcon(getResources().getDrawable(R.drawable.avatar));
             if(mUser.getAvatar() != null ){
                 ImageLoader.getInstance().loadImage(mUser.getAvatar().getFileUrl(this), new ImageLoadingListener() {
                     @Override
@@ -204,8 +204,11 @@ public class MainActivity extends BaseActivity {
 
                     @Override
                     public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                        iProfile.withIcon(loadedImage);
-                        mHeaderResult.updateProfile(iProfile);
+                        mHeaderResult.removeProfile(0);
+                        IProfile iProfile = new ProfileDrawerItem().withName(mUser.getNick())
+                                .withEmail(mUser.getEmail())
+                                .withIcon(loadedImage);
+                        mHeaderResult.addProfile(iProfile,0);
                     }
 
                     @Override
@@ -213,28 +216,27 @@ public class MainActivity extends BaseActivity {
 
                     }
                 });
-            }else{
-                mHeaderResult.updateProfile(iProfile);
+
             }
+            mHeaderResult.addProfile(iProfile,0);
         }else{
-            iProfile.withName(getString(R.string.not_logined_in));
-            iProfile.withEmail(getString(R.string.tab_here_get_more_fun));
-            iProfile.withIcon(getResources().getDrawable(R.drawable.avatar));
-            mHeaderResult.updateProfile(iProfile);
+            IProfile iProfile = new ProfileDrawerItem().withName(getString(R.string.not_logined_in))
+                    .withEmail(getString(R.string.tab_here_get_more_fun))
+                    .withIcon(getResources().getDrawable(R.drawable.avatar));
+            mHeaderResult.addProfile(iProfile,0);
         }
     }
 
     private void login(){
-        final LoginDialog loginDialog = new LoginDialog(MainActivity.this);
+        LoginDialog loginDialog = new LoginDialog(MainActivity.this);
         loginDialog.show();
     }
 
     private String mPhotoName;
     public void onEvent(Event event){
-        switch (event.getEventCode()){           case Event.EVENT_USER_SIGN_IN:
+        switch (event.getEventCode()){
+            case Event.EVENT_USER_SIGN_IN:
             case Event.EVENT_USER_PROFILE_UPDATE:
-                refreshUser();
-                break;
             case Event.EVENT_USER_SIGN_OUT:
                 refreshUser();
                 break;
@@ -330,24 +332,39 @@ public class MainActivity extends BaseActivity {
                 });
                 break;
             case APP.REQUEST.CODE_CAMERA:
-                    File file1= FileUtil.getImageFile(mPhotoName);
-                    SheetDialog sheetDialog =new SheetDialog(this,file1);
-                    sheetDialog.show();
-                    sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file1)));
+                File file1= FileUtil.getImageFile(mPhotoName);
+                mSheetDialog =new SheetDialog(this,file1);
+                mSheetDialog.show();
+
+                //刷新手机媒体库
+                sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file1)));
                 break;
             case APP.REQUEST.CODE_PICK_PICTURE:
                 if(result!=null){
                     File file2 = FileUtil.getFileByUri(this, result.getData());
                     if(file2!=null){
-                        SheetDialog sheetDialog2 =new SheetDialog(this,file2);
-                        sheetDialog2.show();
+                        mSheetDialog =new SheetDialog(this,file2);
+                        mSheetDialog.show();
+                    }
+                }
+                break;
+            case APP.REQUEST.CODE_PICK_LOCATION:
+                if(mSheetDialog != null){
+                    if(mSheetDialog.isShowing()){
+                        BDLocation bdLocation = result.getExtras().getParcelable(PickLocationActivity.KEY_LOCATION);
+                        mSheetDialog.setLocation(bdLocation);
                     }
                 }
                 break;
         }
     }
 
-
-
-
+    @Override
+    public void onBackPressed() {
+        if(mSheetFragment.isShowing()){
+            finish();
+            return;
+        }
+        super.onBackPressed();
+    }
 }

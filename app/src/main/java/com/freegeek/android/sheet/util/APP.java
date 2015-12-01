@@ -21,6 +21,7 @@ public class APP {
     public static final class REQUEST{
         public static final int CODE_CAMERA = 1000;
         public static final int CODE_PICK_PICTURE = 1001;
+        public static final int CODE_PICK_LOCATION = 1002;
     }
 
     public static final class EXTRA{

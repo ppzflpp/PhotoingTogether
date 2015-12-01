@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.baidu.location.BDLocation;
 import com.baidu.location.Poi;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
@@ -48,17 +49,16 @@ import de.greenrobot.event.EventBus;
 
 /**
  * create by rtugeek on 2015-11-29
+ * 以parcelable形式返回，使用：
+ * intent.getExtras().getParcelable(PickLocationActivity.KEY_LOCATION);
  *
- * result return intent bundle:
- * name 地址名称
- * latitude 纬度
- * longitude 经度
  */
 public class PickLocationActivity extends BaseActivity implements OnGetGeoCoderResultListener {
     MapView mMapView = null;
     BaiduMap mBaiduMap = null;
     TextView mLocation;
     LatLng mLatLng = new LatLng(0,0);
+    public static String KEY_LOCATION = "location";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -134,10 +134,8 @@ public class PickLocationActivity extends BaseActivity implements OnGetGeoCoderR
             // 当不需要定位图层时关闭定位图层
             mBaiduMap.setMyLocationEnabled(false);
 
-            List<Poi> list = MyApplication.location.getPoiList();// POI数据
-            if (list != null) {
-                mLocation.setText(list.get(0).getName());
-                Logger.i(list.get(0).getName());
+            if(MyApplication.location != null){
+                mLocation.setText(MyApplication.location.getLocationDescribe());
             }
 
         }
@@ -187,15 +185,20 @@ public class PickLocationActivity extends BaseActivity implements OnGetGeoCoderR
                 LocationService.getInstance(this).getLocation();
                 break;
             case R.id.action_ok:
+
+                BDLocation bdLocation = new BDLocation();
+                bdLocation.setLongitude(mLatLng.longitude);
+                bdLocation.setLatitude(mLatLng.latitude);
+                bdLocation.setLocationDescribe(mLocation.getText().toString());
+
                 Bundle bundle = new Bundle();
-                bundle.putString("name", mLocation.getText().toString());
-                bundle.putDouble("latitude", mLatLng.latitude);
-                bundle.putDouble("longitude", mLatLng.longitude);
+                bundle.putParcelable(KEY_LOCATION,bdLocation);
 
                 Intent intent = new Intent();
                 intent.putExtras(bundle);
 
                 setResult(RESULT_OK, intent);
+                finish();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -210,6 +213,7 @@ public class PickLocationActivity extends BaseActivity implements OnGetGeoCoderR
     public void onGetReverseGeoCodeResult(ReverseGeoCodeResult reverseGeoCodeResult) {
         List<PoiInfo> list = reverseGeoCodeResult.getPoiList();
         if(list != null){
+            mLatLng = reverseGeoCodeResult.getLocation();
             if(list.size() > -1) mLocation.setText(list.get(0).name);
         }
     }

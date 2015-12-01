@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.freegeek.android.sheet.MyApplication;
 import com.freegeek.android.sheet.activity.BaseActivity;
 import com.freegeek.android.sheet.bean.Event;
 import com.freegeek.android.sheet.bean.User;
@@ -90,6 +91,10 @@ public class BaseFragment extends Fragment {
     }
 
     protected User getCurrentUser(){
-        return BmobUser.getCurrentUser(getActivity(),User.class);
+        return MyApplication.currentUser;
+    }
+
+    public boolean isShowing() {
+        return showing;
     }
 }

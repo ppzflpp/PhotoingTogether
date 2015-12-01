@@ -1,10 +1,14 @@
 package com.freegeek.android.sheet;
 
+import android.app.Activity;
 import android.app.Application;
 
 import com.baidu.location.BDLocation;
 import com.baidu.mapapi.SDKInitializer;
+import com.baidu.mapapi.search.core.PoiInfo;
+import com.freegeek.android.sheet.activity.BaseActivity;
 import com.freegeek.android.sheet.bean.User;
+import com.freegeek.android.sheet.ui.dialog.LoginDialog;
 import com.freegeek.android.sheet.util.APP;
 import com.freegeek.android.sheet.util.EventLog;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
@@ -19,9 +23,11 @@ import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
 import com.nostra13.universalimageloader.utils.StorageUtils;
 import com.orhanobut.logger.LogLevel;
 import com.orhanobut.logger.Logger;
+import com.rey.material.widget.SnackBar;
 import com.umeng.analytics.AnalyticsConfig;
 
 import java.io.File;
+import java.util.List;
 
 import cn.bmob.v3.Bmob;
 import cn.bmob.v3.BmobUser;
@@ -100,4 +106,22 @@ public class MyApplication extends Application {
             });
         }
     }
+
+    /**
+     * 获取最精确的位置
+     * @return
+     */
+    public static PoiInfo getFirstLocation(){
+        if(location != null){
+            if(location.getPoiList().size() > 0){
+                List<PoiInfo> list = location.getPoiList();
+                return list.get(0);
+            }else{
+                return null;
+            }
+        }
+        return null;
+    }
+
+
 }

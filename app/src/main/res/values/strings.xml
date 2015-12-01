@@ -35,4 +35,5 @@
     <string name="this_mail_not_be_used">Mail in</string>
     <string name="refresh">刷新</string>
     <string name="tip_location">长按图标可拖动修改定位地址.</string>
+    <string name="tip_to_login">登陆后，开启更多功能</string>
 </resources>

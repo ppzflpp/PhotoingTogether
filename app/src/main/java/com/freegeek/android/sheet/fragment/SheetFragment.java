@@ -12,16 +12,21 @@ import android.view.ViewGroup;
 import com.dexafree.materialList.card.Card;
 import com.dexafree.materialList.card.CardProvider;
 import com.dexafree.materialList.view.MaterialListView;
+import com.freegeek.android.sheet.MyApplication;
 import com.freegeek.android.sheet.R;
+import com.freegeek.android.sheet.activity.BaseActivity;
 import com.freegeek.android.sheet.bean.Event;
 import com.freegeek.android.sheet.bean.Sheet;
 import com.freegeek.android.sheet.ui.MyFab;
 import com.freegeek.android.sheet.ui.MyMaterialList;
+import com.freegeek.android.sheet.ui.dialog.LoginDialog;
 import com.freegeek.android.sheet.util.APP;
 import com.freegeek.android.sheet.util.EventLog;
 import com.freegeek.android.sheet.util.FileUtil;
 import com.gordonwong.materialsheetfab.MaterialSheetFab;
+import com.gordonwong.materialsheetfab.MaterialSheetFabEventListener;
 import com.orhanobut.logger.Logger;
+import com.rey.material.widget.SnackBar;
 import com.soundcloud.android.crop.Crop;
 import com.squareup.picasso.RequestCreator;
 
@@ -68,6 +73,19 @@ public class SheetFragment extends BaseFragment {
         materialSheetFab = new MaterialSheetFab<>(fab, sheetView, overlay,
                 sheetColor, fabColor);
 
+        materialSheetFab.setEventListener(new MaterialSheetFabEventListener() {
+            @Override
+            public void onShowSheet() {
+                super.onShowSheet();
+                if(getCurrentUser() == null){
+                    materialSheetFab.hideSheet();
+                    BaseActivity.showLoginTip((BaseActivity)getActivity());
+                    return;
+                }
+            }
+        });
+
+
         mListView = (MyMaterialList)view. findViewById(R.id.material_listview);
 
         sheetView.findViewById(R.id.fab_item_camera).setOnClickListener(new View.OnClickListener() {
@@ -105,7 +123,7 @@ public class SheetFragment extends BaseFragment {
         bmobQuery.findObjects(getActivity(), new FindListener<Sheet>() {
             @Override
             public void onSuccess(List<Sheet> object) {
-                for (Sheet sheet: object) {
+                for (Sheet sheet : object) {
                     Card card = new Card.Builder(getActivity())
                             .setTag("BIG_IMAGE_CARD")
                             .withProvider(new CardProvider())
@@ -129,7 +147,7 @@ public class SheetFragment extends BaseFragment {
 
             @Override
             public void onError(int code, String msg) {
-                EventLog.BmobToastError(code,getActivity());
+                EventLog.BmobToastError(code, getActivity());
             }
         });
     }

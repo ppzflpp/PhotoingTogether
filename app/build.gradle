@@ -37,7 +37,7 @@ repositories {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-    compile('com.mikepenz:materialdrawer:4.4.4@aar') {
+    compile('com.mikepenz:materialdrawer:4.5.3@aar') {
         transitive = true
     }
     compile 'com.android.support:appcompat-v7:23.1.0'
@@ -48,7 +48,6 @@ dependencies {
     compile 'com.github.orhanobut:logger:1.12'
     compile 'com.umeng.analytics:analytics:latest.integration'
     compile 'cn.bmob.android:bmob-sdk:3.4.3'
-    compile 'cn.bmob.android:bmob-sms:1.0.1'
     compile 'com.android.support:support-v4:23.1.0'
     compile 'com.github.rey5137:material:1.2.1'
     compile 'com.wang.avi:library:1.0.0'

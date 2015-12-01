@@ -13,6 +13,7 @@ import com.freegeek.android.sheet.R;
 import com.freegeek.android.sheet.bean.Event;
 import com.freegeek.android.sheet.service.LocationService;
 import com.freegeek.android.sheet.ui.dialog.LoadingDialog;
+import com.freegeek.android.sheet.ui.dialog.LoginDialog;
 import com.freegeek.android.sheet.util.APP;
 import com.orhanobut.logger.Logger;
 import com.rey.material.widget.SnackBar;
@@ -81,4 +82,25 @@ public class BaseActivity extends AppCompatActivity {
     protected void startService(Class<?> service){
         startService(new Intent(this, service));
     }
+
+    /**
+     * 登陆提醒
+     * @param activity
+     */
+    public static void showLoginTip(final BaseActivity activity){
+        SnackBar mSnackBar = SnackBar
+                .make(activity)
+                .applyStyle(R.style.SnackBarMultiLine)
+                .text(activity.getString(R.string.tip_to_login))
+                .actionText(activity.getString(R.string.login))
+                .actionClickListener(new SnackBar.OnActionClickListener() {
+                    @Override
+                    public void onActionClick(SnackBar sb, int actionId) {
+                        new LoginDialog(activity).show();
+                    }
+                })
+                .duration(5000);
+        mSnackBar.show(activity);
+    }
+
 }

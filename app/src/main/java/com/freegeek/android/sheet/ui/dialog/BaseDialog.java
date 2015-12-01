@@ -1,6 +1,7 @@
 package com.freegeek.android.sheet.ui.dialog;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 
@@ -54,5 +55,9 @@ public class BaseDialog extends Dialog
 
     protected User getCurrentUser(){
         return BmobUser.getCurrentUser(getActivity(),User.class);
+    }
+
+    protected void startActivity(Class<?> activity){
+        context.startActivity(new Intent(context,activity));
     }
 }
