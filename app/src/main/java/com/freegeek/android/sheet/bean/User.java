@@ -1,5 +1,7 @@
 package com.freegeek.android.sheet.bean;
 
+import java.util.List;
+
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.datatype.BmobGeoPoint;
@@ -10,7 +12,6 @@ import cn.bmob.v3.datatype.BmobRelation;
  */
 public class User extends BmobUser {
     private String nick;
-    private BmobRelation like;
     /**
      * true 男 false 女
      */
@@ -45,14 +46,6 @@ public class User extends BmobUser {
         this.nick = nick;
     }
 
-    public BmobRelation getLike() {
-        return like;
-    }
-
-    public void setLike(BmobRelation like) {
-        this.like = like;
-    }
-
     public Boolean getSex() {
         return sex;
     }
@@ -83,5 +76,18 @@ public class User extends BmobUser {
 
     public void setFollow(BmobRelation follow) {
         this.follow = follow;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        try {
+            User user = (User) o;
+            if(user.getObjectId().equals(getObjectId())){
+                return true;
+            }
+            return false;
+        }catch (Exception e){
+            return false;
+        }
     }
 }

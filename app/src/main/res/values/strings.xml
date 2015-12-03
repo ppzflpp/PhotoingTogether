@@ -36,4 +36,9 @@
     <string name="refresh">刷新</string>
     <string name="tip_location">长按图标可拖动修改定位地址.</string>
     <string name="tip_to_login">登陆后，开启更多功能</string>
+    <string name="title_activity_sheet_shot">SheetShotActivity</string>
+    <string name="share">分享</string>
+    <string name="alert_null_text">不能为空</string>
+    <string name="hint_140_char">140个字符</string>
+    <string name="comment">评论</string>
 </resources>

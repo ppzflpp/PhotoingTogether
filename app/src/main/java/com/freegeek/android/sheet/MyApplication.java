@@ -107,21 +107,5 @@ public class MyApplication extends Application {
         }
     }
 
-    /**
-     * 获取最精确的位置
-     * @return
-     */
-    public static PoiInfo getFirstLocation(){
-        if(location != null){
-            if(location.getPoiList().size() > 0){
-                List<PoiInfo> list = location.getPoiList();
-                return list.get(0);
-            }else{
-                return null;
-            }
-        }
-        return null;
-    }
-
 
 }

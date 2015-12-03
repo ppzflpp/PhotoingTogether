@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
@@ -13,9 +12,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.baidu.location.BDLocation;
-import com.baidu.location.BDLocationListener;
-import com.baidu.location.LocationClient;
-import com.baidu.location.LocationClientOption;
 import com.freegeek.android.sheet.activity.BaseActivity;
 import com.freegeek.android.sheet.activity.PickLocationActivity;
 import com.freegeek.android.sheet.bean.Event;
@@ -25,8 +21,9 @@ import com.freegeek.android.sheet.fragment.LocationFragment;
 import com.freegeek.android.sheet.fragment.ProfileFragment;
 import com.freegeek.android.sheet.fragment.SheetFragment;
 import com.freegeek.android.sheet.service.LocationService;
+import com.freegeek.android.sheet.service.UserService;
 import com.freegeek.android.sheet.ui.dialog.LoginDialog;
-import com.freegeek.android.sheet.ui.dialog.SheetDialog;
+import com.freegeek.android.sheet.ui.dialog.PostSheetDialog;
 import com.freegeek.android.sheet.util.APP;
 import com.freegeek.android.sheet.util.EventLog;
 import com.freegeek.android.sheet.util.FileUtil;
@@ -43,15 +40,12 @@ import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
-import com.orhanobut.logger.Logger;
 import com.soundcloud.android.crop.Crop;
 
 import java.io.File;
-import java.net.URI;
 
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobFile;
-import cn.bmob.v3.listener.DeleteListener;
 import cn.bmob.v3.listener.UpdateListener;
 import cn.bmob.v3.listener.UploadFileListener;
 import de.greenrobot.event.EventBus;
@@ -64,7 +58,7 @@ public class MainActivity extends BaseActivity {
     private ProfileFragment mProfileFragment;
     private SheetFragment mSheetFragment;
     private LocationFragment mLocationFragment;
-    private SheetDialog mSheetDialog;
+    private PostSheetDialog mPostSheetDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +75,9 @@ public class MainActivity extends BaseActivity {
         replaceFragment(mSheetFragment);
 
         LocationService.getInstance(this).getLocation();
+        UserService.getInstance(this).refreshLikeSheet();
+
+        startActivity(PickLocationActivity.class);
     }
 
     private void initFragments(){
@@ -88,7 +85,6 @@ public class MainActivity extends BaseActivity {
         mSheetFragment = new SheetFragment();
         mLocationFragment = new LocationFragment();
     }
-
 
     /**
      * 初始化抽屉导航
@@ -333,8 +329,8 @@ public class MainActivity extends BaseActivity {
                 break;
             case APP.REQUEST.CODE_CAMERA:
                 File file1= FileUtil.getImageFile(mPhotoName);
-                mSheetDialog =new SheetDialog(this,file1);
-                mSheetDialog.show();
+                mPostSheetDialog =new PostSheetDialog(this,file1);
+                mPostSheetDialog.show();
 
                 //刷新手机媒体库
                 sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file1)));
@@ -343,16 +339,16 @@ public class MainActivity extends BaseActivity {
                 if(result!=null){
                     File file2 = FileUtil.getFileByUri(this, result.getData());
                     if(file2!=null){
-                        mSheetDialog =new SheetDialog(this,file2);
-                        mSheetDialog.show();
+                        mPostSheetDialog =new PostSheetDialog(this,file2);
+                        mPostSheetDialog.show();
                     }
                 }
                 break;
             case APP.REQUEST.CODE_PICK_LOCATION:
-                if(mSheetDialog != null){
-                    if(mSheetDialog.isShowing()){
+                if(mPostSheetDialog != null){
+                    if(mPostSheetDialog.isShowing()){
                         BDLocation bdLocation = result.getExtras().getParcelable(PickLocationActivity.KEY_LOCATION);
-                        mSheetDialog.setLocation(bdLocation);
+                        mPostSheetDialog.setLocation(bdLocation);
                     }
                 }
                 break;

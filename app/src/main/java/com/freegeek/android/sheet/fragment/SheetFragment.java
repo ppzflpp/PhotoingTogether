@@ -11,22 +11,23 @@ import android.view.ViewGroup;
 
 import com.dexafree.materialList.card.Card;
 import com.dexafree.materialList.card.CardProvider;
-import com.dexafree.materialList.view.MaterialListView;
-import com.freegeek.android.sheet.MyApplication;
+import com.dexafree.materialList.card.OnActionClickListener;
+import com.dexafree.materialList.card.action.TextViewAction;
+import com.dexafree.materialList.listeners.RecyclerItemClickListener;
 import com.freegeek.android.sheet.R;
 import com.freegeek.android.sheet.activity.BaseActivity;
+import com.freegeek.android.sheet.activity.SheetShotActivity;
 import com.freegeek.android.sheet.bean.Event;
 import com.freegeek.android.sheet.bean.Sheet;
+import com.freegeek.android.sheet.service.UserService;
 import com.freegeek.android.sheet.ui.MyFab;
 import com.freegeek.android.sheet.ui.MyMaterialList;
-import com.freegeek.android.sheet.ui.dialog.LoginDialog;
+import com.freegeek.android.sheet.ui.SheetCardProvider;
 import com.freegeek.android.sheet.util.APP;
 import com.freegeek.android.sheet.util.EventLog;
 import com.freegeek.android.sheet.util.FileUtil;
 import com.gordonwong.materialsheetfab.MaterialSheetFab;
 import com.gordonwong.materialsheetfab.MaterialSheetFabEventListener;
-import com.orhanobut.logger.Logger;
-import com.rey.material.widget.SnackBar;
 import com.soundcloud.android.crop.Crop;
 import com.squareup.picasso.RequestCreator;
 
@@ -35,6 +36,7 @@ import java.util.List;
 
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.UpdateListener;
 import de.greenrobot.event.EventBus;
 
 
@@ -119,16 +121,62 @@ public class SheetFragment extends BaseFragment {
         BmobQuery<Sheet> bmobQuery = new BmobQuery<>();
         bmobQuery.addWhereEqualTo("author", getCurrentUser());
         bmobQuery.order("-updatedAt");
-        bmobQuery.include("author");// 希望在查询帖子信息的同时也把发布人的信息查询出来
+        bmobQuery.include("author,liker");// 希望在查询帖子信息的同时也把发布人的信息查询出来
         bmobQuery.findObjects(getActivity(), new FindListener<Sheet>() {
             @Override
-            public void onSuccess(List<Sheet> object) {
-                for (Sheet sheet : object) {
+            public void onSuccess(final List<Sheet> sheets) {
+                for (Sheet sheet : sheets) {
                     Card card = new Card.Builder(getActivity())
-                            .setTag("BIG_IMAGE_CARD")
-                            .withProvider(new CardProvider())
-                            .setLayout(R.layout.list_item_sheet)
+                            .setTag("SHEET_CARD")
+                            .withProvider(new SheetCardProvider())
                             .setTitle(sheet.getContent())
+                            .setLike(sheet.getLiker().contains(getCurrentUser().getObjectId()))
+                            .setCommentNumber(5)
+                            .setSheet(sheet)
+                            .setItemClickListener(new OnActionClickListener() {
+                                @Override
+                                public void onActionClicked(View view, Card card) {
+                                    Intent intent= new Intent(getActivity(), SheetShotActivity.class);
+                                    Bundle bundle = new Bundle();
+                                    bundle.putSerializable(SheetShotActivity.KEY_SHEET, ((SheetCardProvider) card.getProvider()).getSheet());
+                                    intent.putExtras(bundle);
+                                    startActivity(intent);
+                                }
+                            })
+                            .setLikeListener(new OnActionClickListener() {
+                                @Override
+                                public void onActionClicked(View view, Card card) {
+
+                                    final SheetCardProvider sheetCardProvider = (SheetCardProvider) card.getProvider();
+                                    if (sheetCardProvider.isLike()) {
+                                        UserService.getInstance(getContext()).removeLikeSheet(sheetCardProvider.getSheet(), new UpdateListener() {
+                                            @Override
+                                            public void onSuccess() {
+                                                sheetCardProvider.setLike(false);
+                                            }
+
+                                            @Override
+                                            public void onFailure(int i, String s) {
+                                                EventLog.BmobToastError(i, getActivity());
+                                            }
+                                        });
+
+                                    } else {
+                                        UserService.getInstance(getContext()).addLikeSheet(sheetCardProvider.getSheet(), new UpdateListener() {
+                                            @Override
+                                            public void onSuccess() {
+                                                sheetCardProvider.setLike(true);
+                                            }
+
+                                            @Override
+                                            public void onFailure(int i, String s) {
+                                                EventLog.BmobToastError(i, getActivity());
+                                            }
+                                        });
+                                    }
+
+                                }
+                            })
                             .setDrawable(sheet.getPicture().getFileUrl(getActivity()))
                             .setDrawableConfiguration(new CardProvider.OnImageConfigListener() {
                                 @Override
@@ -150,6 +198,7 @@ public class SheetFragment extends BaseFragment {
                 EventLog.BmobToastError(code, getActivity());
             }
         });
+
     }
 
 

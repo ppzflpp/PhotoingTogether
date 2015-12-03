@@ -58,7 +58,11 @@
             android:name=".activity.PickLocationActivity"
             android:label="@string/title_activity_pick_location"
             android:theme="@style/AppTheme.NoActionBar" />
-
+        <activity
+            android:name=".activity.SheetShotActivity"
+            android:label="@string/title_activity_sheet_shot"
+            android:windowSoftInputMode="stateHidden|adjustPan"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

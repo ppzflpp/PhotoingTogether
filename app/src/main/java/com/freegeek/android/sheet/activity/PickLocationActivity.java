@@ -5,6 +5,7 @@ import android.media.midi.MidiDeviceInfo;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -128,7 +129,7 @@ public class PickLocationActivity extends BaseActivity implements OnGetGeoCoderR
             OverlayOptions oo = new MarkerOptions().draggable(true).icon(mCurrentMarker).position(mLatLng).extraInfo(bundle);
             mBaiduMap.addOverlay(oo);
             //地图移动到当前地点
-            MapStatusUpdate u = MapStatusUpdateFactory.newLatLng(mLatLng);
+            MapStatusUpdate u = MapStatusUpdateFactory.newLatLngZoom(mLatLng, mBaiduMap.getMaxZoomLevel() - 2);
             mBaiduMap.animateMapStatus(u);
 
             // 当不需要定位图层时关闭定位图层
@@ -214,7 +215,14 @@ public class PickLocationActivity extends BaseActivity implements OnGetGeoCoderR
         List<PoiInfo> list = reverseGeoCodeResult.getPoiList();
         if(list != null){
             mLatLng = reverseGeoCodeResult.getLocation();
-            if(list.size() > -1) mLocation.setText(list.get(0).name);
+            if(list.size() > -1) {
+                mLocation.setText(list.get(0).name);
+            }
+        }else{
+            if(!TextUtils.isEmpty(reverseGeoCodeResult.getAddress())){
+                mLocation.setText(reverseGeoCodeResult.getAddress());
+            }
         }
+        Logger.i(mLocation.getText().toString());
     }
 }

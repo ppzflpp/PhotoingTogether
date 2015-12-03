@@ -5,7 +5,7 @@ import cn.bmob.v3.BmobObject;
 /**
  * Created by rtugeek@gmail.com on 2015/11/6.
  */
-public class Comment extends BmobObject {
+public class Comment extends BmobObject{
     public User user;
     public Sheet sheet;
     public String content;

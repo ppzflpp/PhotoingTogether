@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.freegeek.android.sheet.R;
 import com.freegeek.android.sheet.bean.Event;
+import com.freegeek.android.sheet.bean.User;
 import com.freegeek.android.sheet.service.LocationService;
 import com.freegeek.android.sheet.ui.dialog.LoadingDialog;
 import com.freegeek.android.sheet.ui.dialog.LoginDialog;
@@ -18,6 +19,7 @@ import com.freegeek.android.sheet.util.APP;
 import com.orhanobut.logger.Logger;
 import com.rey.material.widget.SnackBar;
 
+import cn.bmob.v3.BmobUser;
 import de.greenrobot.event.EventBus;
 
 /**
@@ -101,6 +103,10 @@ public class BaseActivity extends AppCompatActivity {
                 })
                 .duration(5000);
         mSnackBar.show(activity);
+    }
+
+    public User getCurrentUser(){
+        return BmobUser.getCurrentUser(this,User.class);
     }
 
 }

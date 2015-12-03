@@ -15,7 +15,6 @@ import com.freegeek.android.sheet.activity.BaseActivity;
 import com.freegeek.android.sheet.activity.PickLocationActivity;
 import com.freegeek.android.sheet.bean.Event;
 import com.freegeek.android.sheet.bean.Sheet;
-import com.freegeek.android.sheet.service.LocationService;
 import com.freegeek.android.sheet.util.APP;
 import com.freegeek.android.sheet.util.BitmapUtil;
 import com.freegeek.android.sheet.util.EventLog;
@@ -36,15 +35,15 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by rtugeek@gmail.com on 2015/11/11.
  */
-public class SheetDialog extends BaseDialog {
+public class PostSheetDialog extends BaseDialog {
     private TextInputLayout mThoughtInput;
     private EditText mEditText;
     private ImageView mImageView;
     private TextView mTxtLocation;
     private BDLocation mLocation;
-    public SheetDialog(BaseActivity context,final File localImage) {
+    public PostSheetDialog(BaseActivity context, final File localImage) {
         super(context);
-        View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_push_sheet,null);
+        View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_post_sheet,null);
         mThoughtInput = (TextInputLayout)view.findViewById(R.id.dialog_input_thought);
         mTxtLocation = (TextView)view.findViewById(R.id.dialog_txt_location);
 
@@ -110,7 +109,7 @@ public class SheetDialog extends BaseDialog {
                         sheet.setContent(mEditText.getText().toString());
                         sheet.setPicture(bmobFile);
                         sheet.setLocationName(mTxtLocation.getText().toString());
-
+                        //添加地理位置
                         BmobGeoPoint bmobGeoPoint =new BmobGeoPoint(mLocation.getLongitude(),mLocation.getLatitude());
                         sheet.setLocation(bmobGeoPoint);
 
