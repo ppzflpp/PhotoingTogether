@@ -23,6 +23,7 @@ import de.greenrobot.event.EventBus;
 public class LocationService implements BDLocationListener{
 
     private static LocationClient mLocationClient = null;
+    public static BDLocation location;
     private static LocationService instance;
 
     public static LocationService getInstance(Context context){
@@ -129,27 +130,12 @@ public class LocationService implements BDLocationListener{
         }
         Logger.i(sb.toString());
 
-        MyApplication.location = location;
+        LocationService.location = location;
 
         if(location!= null)EventBus.getDefault().post(new Event(location,Event.EVENT_GET_LOCATION));
 
         mLocationClient.stop();
     }
 
-    /**
-     * 从BDLocation中获取最精确的位置
-     * @param location
-     * @return
-     */
-    public static PoiInfo getFirstLocation(BDLocation location){
-        if(location != null){
-            if(location.getPoiList().size() > 0){
-                List<PoiInfo> list = location.getPoiList();
-                return list.get(0);
-            }else{
-                return null;
-            }
-        }
-        return null;
-    }
+
 }

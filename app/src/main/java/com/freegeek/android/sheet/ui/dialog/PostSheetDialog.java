@@ -15,13 +15,12 @@ import com.freegeek.android.sheet.activity.BaseActivity;
 import com.freegeek.android.sheet.activity.PickLocationActivity;
 import com.freegeek.android.sheet.bean.Event;
 import com.freegeek.android.sheet.bean.Sheet;
+import com.freegeek.android.sheet.service.LocationService;
 import com.freegeek.android.sheet.util.APP;
 import com.freegeek.android.sheet.util.BitmapUtil;
 import com.freegeek.android.sheet.util.EventLog;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.orhanobut.logger.Logger;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 
@@ -56,27 +55,7 @@ public class PostSheetDialog extends BaseDialog {
         Logger.i(localImage.getPath());
 
         mImageView= (ImageView)view.findViewById(R.id.dialog_img_sheet_img);
-        ImageLoader.getInstance().loadImage("file://" + localImage.getAbsolutePath(), BitmapUtil.getImageDisplayOption(), new ImageLoadingListener() {
-            @Override
-            public void onLoadingStarted(String imageUri, View view) {
-
-            }
-
-            @Override
-            public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-
-            }
-
-            @Override
-            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                mImageView.setImageBitmap(loadedImage);
-            }
-
-            @Override
-            public void onLoadingCancelled(String imageUri, View view) {
-
-            }
-        });
+        Picasso.with(getContext()).load(localImage).into(mImageView);
 
         setContentView(view);
 
@@ -146,7 +125,7 @@ public class PostSheetDialog extends BaseDialog {
             }
         });
 
-        setLocation(MyApplication.location);
+        setLocation(LocationService.location);
     }
 
     /**

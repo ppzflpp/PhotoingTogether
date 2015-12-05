@@ -1,100 +1,74 @@
 package com.freegeek.android.sheet.fragment;
 
-import android.app.Activity;
+
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.baidu.mapapi.map.MapView;
-import com.baidu.mapapi.model.LatLng;
-import com.baidu.mapapi.utils.DistanceUtil;
 import com.dexafree.materialList.card.Card;
 import com.dexafree.materialList.card.CardProvider;
 import com.dexafree.materialList.card.OnActionClickListener;
 import com.freegeek.android.sheet.R;
 import com.freegeek.android.sheet.activity.SheetShotActivity;
-import com.freegeek.android.sheet.bean.Event;
 import com.freegeek.android.sheet.bean.Sheet;
-import com.freegeek.android.sheet.service.LocationService;
 import com.freegeek.android.sheet.service.UserService;
 import com.freegeek.android.sheet.ui.MyMaterialList;
 import com.freegeek.android.sheet.ui.SheetCardProvider;
 import com.freegeek.android.sheet.util.EventLog;
-import com.orhanobut.logger.Logger;
 import com.squareup.picasso.RequestCreator;
 
 import java.util.List;
-import java.util.Map;
 
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.UpdateListener;
-import de.greenrobot.event.EventBus;
 
-
-public class LocationFragment extends BaseFragment {
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class LikeSheetFragment extends BaseFragment {
 
 
     private MyMaterialList mSheetMyMaterialList;
 
-    public LocationFragment() {
-        // Required empty public constructor
+    public LikeSheetFragment() {
+
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    public void onEvent(Event event){
-        switch (event.getEventCode()){
-            case Event.EVENT_GET_LOCATION:
-                refreshList();
-                break;
-        }
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view =  inflater.inflate(R.layout.fragment_location, container, false);
+        View view = inflater.inflate(R.layout.fragment_like_sheet, container, false);
         mSheetMyMaterialList = (MyMaterialList) view.findViewById(R.id.list_sheet);
-        refreshList();
+
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        refreshData();
+    }
 
-    private void refreshList(){
-        UserService.getInstance().getNearbySheet(new FindListener<Sheet>() {
+    private void refreshData(){
+        UserService.getInstance().getLikeSheet(new FindListener<Sheet>() {
             @Override
             public void onSuccess(List<Sheet> sheets) {
                 for (Sheet sheet : sheets) {
-                    if(LocationService.location == null || sheet.getLocation() == null) continue;
-                    LatLng myLocation = new LatLng(LocationService.location.getLatitude(),LocationService.location.getLongitude());
-                    LatLng toLocation = new LatLng(sheet.getLocation().getLatitude(),sheet.getLocation().getLongitude());
-                    double dis = DistanceUtil.getDistance(myLocation, toLocation);
-                    String disTxt;
-                    if(dis < 1000){
-                        disTxt = (int)dis +"m";
-                    }else{
-                        disTxt = (int)dis / 1000 +"Km";
-                    }
-                    Logger.i("Distance : " + dis);
                     Card card = new Card.Builder(getActivity())
-                            .setTag("SHEET_LOCATION_CARD")
+                            .setTag("SHEET_LIKE_CARD")
                             .withProvider(new SheetCardProvider())
                             .setTitle(sheet.getContent())
-                            .setLike(getCurrentUser() == null ? false : sheet.getLiker().contains(getCurrentUser().getObjectId()))
-                            .setRightText(disTxt)
+                            .setLike(getCurrentUser() == null ? false : getCurrentUser().getLikeSheet().contains(sheet.getObjectId()))
                             .setSheet(sheet)
                             .setItemClickListener(new OnActionClickListener() {
                                 @Override
                                 public void onActionClicked(View view, Card card) {
-                                    Intent intent = new Intent(getActivity(), SheetShotActivity.class);
+                                    Intent intent= new Intent(getActivity(), SheetShotActivity.class);
                                     Bundle bundle = new Bundle();
                                     bundle.putSerializable(SheetShotActivity.KEY_SHEET, ((SheetCardProvider) card.getProvider()).getSheet());
                                     intent.putExtras(bundle);
@@ -136,6 +110,14 @@ public class LocationFragment extends BaseFragment {
                                 }
                             })
                             .setDrawable(sheet.getPicture().getFileUrl(getActivity()))
+                            .setDrawableConfiguration(new CardProvider.OnImageConfigListener() {
+                                @Override
+                                public void onImageConfigure(@NonNull final RequestCreator requestCreator) {
+//                                    requestCreator.rotate(position * 45.0f)
+//                                            .resize(200, 200)
+//                                            .centerCrop();
+                                }
+                            })
                             .endConfig()
                             .build();
                     mSheetMyMaterialList.getAdapter().add(card);
@@ -144,12 +126,8 @@ public class LocationFragment extends BaseFragment {
 
             @Override
             public void onError(int i, String s) {
-                EventLog.BmobToastError(i, getActivity());
+                EventLog.BmobToastError(i,getActivity());
             }
         });
     }
-
-
-
-
 }

@@ -31,9 +31,13 @@ public class Event {
      */
     public static final int EVENT_PUSH_SHEET = 6;
     /**
+     *删除了一张新照片
+     */
+    public static final int EVENT_DELETE_SHEET = 7;
+    /**
      *获取到地理位置
      */
-    public static final int EVENT_GET_LOCATION = 7;
+    public static final int EVENT_GET_LOCATION = 8;
     public Event(int eventCode) {
         this.eventCode = eventCode;
     }

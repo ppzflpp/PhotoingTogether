@@ -24,6 +24,10 @@ public class APP {
         public static final int CODE_PICK_LOCATION = 1002;
     }
 
+    public static final class ACTION{
+        public static final String MAIN_ACTIVITY_FRAGMENT_PROFILE = "MAIN_ACTIVITY_FRAGMENT_PROFILE";
+    }
+
     public static final class EXTRA{
         public static final String FILE_NAME = "EXTRA_FILE_NAME";
     }

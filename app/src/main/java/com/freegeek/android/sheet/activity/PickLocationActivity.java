@@ -114,11 +114,11 @@ public class PickLocationActivity extends BaseActivity implements OnGetGeoCoderR
     }
 
     private void refreshLocation(){
-        if(MyApplication.location != null){
+        if(LocationService.location != null){
             mBaiduMap.clear();
             mBaiduMap.setMyLocationEnabled(true);
 
-            mLatLng = new LatLng(MyApplication.location.getLatitude(),MyApplication.location.getLongitude());
+            mLatLng = new LatLng(LocationService.location.getLatitude(),LocationService.location.getLongitude());
 
             //添加标注
             BitmapDescriptor mCurrentMarker = BitmapDescriptorFactory
@@ -135,8 +135,8 @@ public class PickLocationActivity extends BaseActivity implements OnGetGeoCoderR
             // 当不需要定位图层时关闭定位图层
             mBaiduMap.setMyLocationEnabled(false);
 
-            if(MyApplication.location != null){
-                mLocation.setText(MyApplication.location.getLocationDescribe());
+            if(LocationService.location != null){
+                mLocation.setText(LocationService.location.getLocationDescribe());
             }
 
         }
@@ -149,7 +149,6 @@ public class PickLocationActivity extends BaseActivity implements OnGetGeoCoderR
                 refreshLocation();
                 break;
         }
-
     }
 
     @Override

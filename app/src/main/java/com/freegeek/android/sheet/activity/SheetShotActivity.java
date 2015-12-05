@@ -1,6 +1,6 @@
 package com.freegeek.android.sheet.activity;
 
-import android.graphics.Color;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TextInputLayout;
@@ -9,6 +9,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -16,21 +18,26 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.freegeek.android.sheet.MainActivity;
 import com.freegeek.android.sheet.R;
 import com.freegeek.android.sheet.bean.Comment;
+import com.freegeek.android.sheet.bean.Event;
 import com.freegeek.android.sheet.bean.Sheet;
 import com.freegeek.android.sheet.service.UserService;
 import com.freegeek.android.sheet.ui.adapter.CommentAdapter;
+import com.freegeek.android.sheet.util.APP;
 import com.freegeek.android.sheet.util.EventLog;
 import com.github.siyamed.shapeimageview.CircularImageView;
+import com.rey.material.app.Dialog;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.bmob.v3.listener.DeleteListener;
 import cn.bmob.v3.listener.FindListener;
-import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by rtugeek on 2015-12-02
@@ -42,18 +49,14 @@ import cn.bmob.v3.listener.UpdateListener;
  */
 public class SheetShotActivity extends BaseActivity {
     public static String KEY_SHEET = "sheet";
+    public static String KEY_POSITION = "position";
     private ImageView mImgSheet;
     private Sheet mSheet;
-    private ImageView mSheetImageView;
-    private Toolbar mToolbarToolbar;
     private ImageView mLikeImageView;
     private TextView mLikeNumberTextView;
     private TextView mCommentNumberTextView;
     private RecyclerView mListCommentRecyclerView;
-    private CollapsingToolbarLayout mToolbarCollapsingToolbarLayout;
     private LinearLayout mLikeLinearLayout;
-    private LinearLayout mCommentLinearLayout;
-    private LinearLayout mShareLinearLayout;
     private TextView mContentTextView;
     private CircularImageView mAvatarCircularImageView;
     private TextInputLayout mCommentTextInputLayout;
@@ -66,50 +69,33 @@ public class SheetShotActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sheet_shot);
-        mSheetImageView = (ImageView) findViewById(R.id.img_sheet);
         mAvatarCircularImageView = (CircularImageView) findViewById(R.id.img_avatar);
         mContentTextView = (TextView) findViewById(R.id.txt_content);
         mLikeImageView = (ImageView) findViewById(R.id.img_like);
         mLikeNumberTextView = (TextView) findViewById(R.id.txt_like_number);
         mLikeLinearLayout = (LinearLayout) findViewById(R.id.linear_like);
-        mCommentNumberTextView = (TextView) findViewById(R.id.txt_comment_number);
-        mCommentLinearLayout = (LinearLayout) findViewById(R.id.linear_comment);
-        mShareLinearLayout = (LinearLayout) findViewById(R.id.linear_share);
-        mToolbarToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mToolbarCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        mCommentNumberTextView = (TextView) findViewById(R.id.txt_right_content);
         mCommentTextInputLayout = (TextInputLayout) findViewById(R.id.input_comment);
         mPostCommentImageButton = (ImageButton) findViewById(R.id.btn_post_comment);
         mListCommentRecyclerView = (RecyclerView) findViewById(R.id.list_comment);
 
-        mSheetImageView = (ImageView) findViewById(R.id.img_sheet);
         mContentTextView = (TextView) findViewById(R.id.txt_content);
         mAvatarCircularImageView = (CircularImageView) findViewById(R.id.img_avatar);
         mLikeImageView = (ImageView) findViewById(R.id.img_like);
         mLikeNumberTextView = (TextView) findViewById(R.id.txt_like_number);
         mLikeLinearLayout = (LinearLayout) findViewById(R.id.linear_like);
-        mCommentNumberTextView = (TextView) findViewById(R.id.txt_comment_number);
-        mCommentLinearLayout = (LinearLayout) findViewById(R.id.linear_comment);
-        mShareLinearLayout = (LinearLayout) findViewById(R.id.linear_share);
-        mToolbarToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mToolbarCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        mCommentNumberTextView = (TextView) findViewById(R.id.txt_right_content);
         mListCommentRecyclerView = (RecyclerView) findViewById(R.id.list_comment);
 
 
-        mSheetImageView = (ImageView) findViewById(R.id.img_sheet);
-        mToolbarToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mToolbarCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         mLikeImageView = (ImageView) findViewById(R.id.img_like);
         mLikeNumberTextView = (TextView) findViewById(R.id.txt_like_number);
         mLikeLinearLayout = (LinearLayout) findViewById(R.id.linear_like);
-        mCommentNumberTextView = (TextView) findViewById(R.id.txt_comment_number);
-        mCommentLinearLayout = (LinearLayout) findViewById(R.id.linear_comment);
-        mShareLinearLayout = (LinearLayout) findViewById(R.id.linear_share);
+        mCommentNumberTextView = (TextView) findViewById(R.id.txt_right_content);
         mListCommentRecyclerView = (RecyclerView) findViewById(R.id.list_comment);
-        mSheetImageView = (ImageView) findViewById(R.id.img_sheet);
-        mToolbarToolbar = (Toolbar) findViewById(R.id.toolbar);
         mLikeImageView = (ImageView) findViewById(R.id.img_like);
         mLikeNumberTextView = (TextView) findViewById(R.id.txt_like_number);
-        mCommentNumberTextView = (TextView) findViewById(R.id.txt_comment_number);
+        mCommentNumberTextView = (TextView) findViewById(R.id.txt_right_content);
         mListCommentRecyclerView = (RecyclerView) findViewById(R.id.list_comment);
         mImgSheet = (ImageView)findViewById(R.id.img_sheet);
         mCommentEditText = mCommentTextInputLayout.getEditText();
@@ -129,7 +115,10 @@ public class SheetShotActivity extends BaseActivity {
 
         //初始化信息
         Picasso.with(this).load(mSheet.getPicture().getFileUrl(this)).error(R.drawable.header_bg).into(mImgSheet);
-        Picasso.with(this).load(getCurrentUser().getAvatar().getFileUrl(this)).error(R.drawable.avatar).into(mAvatarCircularImageView);
+        if( mSheet.getAuthor().getAvatar() !=null) Picasso.with(this)
+                .load(mSheet.getAuthor().getAvatar().getFileUrl(this))
+                .error(R.drawable.avatar)
+                .into(mAvatarCircularImageView);
         mContentTextView.setText(mSheet.getContent());
         refreshLike();
         refreshComment();
@@ -148,7 +137,7 @@ public class SheetShotActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 if (mSheet.getLiker().contains(getCurrentUser().getObjectId())) {
-                    UserService.getInstance(getActivity()).removeLikeSheet(mSheet, new UpdateListener() {
+                    UserService.getInstance().removeLikeSheet(mSheet, new UpdateListener() {
                         @Override
                         public void onSuccess() {
                             refreshLike();
@@ -161,7 +150,7 @@ public class SheetShotActivity extends BaseActivity {
                     });
 
                 } else {
-                    UserService.getInstance(getActivity()).addLikeSheet(mSheet, new UpdateListener() {
+                    UserService.getInstance().addLikeSheet(mSheet, new UpdateListener() {
                         @Override
                         public void onSuccess() {
                             refreshLike();
@@ -188,10 +177,10 @@ public class SheetShotActivity extends BaseActivity {
                     comment.setSheet(mSheet);
                     comment.setContent(mCommentEditText.getText().toString());
                     showLoading();
-                    UserService.getInstance(getActivity()).postComment(comment, new UserService.MySaveListener() {
+                    UserService.getInstance().postComment(comment, new UserService.MySaveListener() {
                         @Override
                         public void onSuccess(Object o) {
-                            mComments.add(0,(Comment)o);
+                            mComments.add(0, (Comment) o);
                             mCommentNumberTextView.setText(String.valueOf(mComments.size()));
                             mCommentAdapter.notifyItemInserted(0);
                             dismissLoading();
@@ -199,18 +188,78 @@ public class SheetShotActivity extends BaseActivity {
 
                         @Override
                         public void onFailure(int i, String s) {
-                            EventLog.BmobToastError(i,getActivity());
+                            EventLog.BmobToastError(i, getActivity());
                             dismissLoading();
                         }
                     });
                 }
             }
         });
+
+        mAvatarCircularImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("user",mSheet.getAuthor());
+                intent.putExtras(bundle);
+                intent.setAction(APP.ACTION.MAIN_ACTIVITY_FRAGMENT_PROFILE);
+                startActivity(intent);
+            }
+        });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_delete:
+                final Dialog dialog = new Dialog(this);
+                dialog.setTitle(R.string.delete_this_picture);
+                dialog.negativeAction(R.string.cancel);
+                dialog.positiveAction(R.string.confirm);
+                dialog.negativeActionClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+                dialog.positiveActionClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                        showLoading();
+                        UserService.getInstance().deleteSheet(mSheet, new DeleteListener() {
+                            @Override
+                            public void onSuccess() {
+                                dismissLoading();
+                                finish();
+                            }
+
+                            @Override
+                            public void onFailure(int i, String s) {
+                                EventLog.BmobToastError(i, getActivity());
+                                dismissLoading();
+                            }
+                        });
+                    }
+                });
+                dialog.show();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if(getCurrentUser()!=null &&mSheet.getAuthor().getObjectId().equals(getCurrentUser().getObjectId())){
+            getMenuInflater().inflate(R.menu.menu_sheet_shot, menu);
+        }
+        return true;
     }
 
     private void refreshLike(){
         mLikeNumberTextView.setText(mSheet.getLiker().size()+ "");
-        if (mSheet.getLiker().contains(getCurrentUser().getObjectId())) {
+        if (getCurrentUser() !=null &&mSheet.getLiker().contains(getCurrentUser().getObjectId())) {
             mLikeImageView.setImageResource(R.drawable.ic_favorite_black_24dp);
         } else {
             mLikeImageView.setImageResource(R.drawable.ic_favorite_outline_black_24dp);
@@ -218,14 +267,13 @@ public class SheetShotActivity extends BaseActivity {
     }
 
     private void refreshComment(){
-        UserService.getInstance(this).getSheetComments(mSheet, new FindListener<Comment>() {
+        UserService.getInstance().getSheetComments(mSheet, new FindListener<Comment>() {
             @Override
             public void onSuccess(List<Comment> list) {
                 mComments.clear();
                 mComments.addAll(list);
                 mCommentNumberTextView.setText(String.valueOf(list.size()));
                 mCommentAdapter.notifyDataSetChanged();
-
             }
 
             @Override

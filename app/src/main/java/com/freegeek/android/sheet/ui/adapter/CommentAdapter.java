@@ -46,7 +46,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         if(user == null){
             return;
         }
-        holder.setAvatar(user.getAvatar().getFileUrl(holder.getContext()));
+        if(user.getAvatar() != null) holder.setAvatar(user.getAvatar().getFileUrl(holder.getContext()));
         holder.setDate(mComments.get(position).getUpdatedAt());
         holder.setContent(mComments.get(position).getContent());
         holder.setNick(user.getNick());

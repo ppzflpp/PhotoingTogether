@@ -41,4 +41,10 @@
     <string name="alert_null_text">不能为空</string>
     <string name="hint_140_char">140个字符</string>
     <string name="comment">评论</string>
+    <string name="delete">删除</string>
+    <string name="delete_this_photo">删除这张照片？</string>
+    <string name="delete_this_picture">删除这张照片？</string>
+    <string name="nearby">附近的</string>
+    <string name="follow">关注</string>
+    <string name="cancel_follow">取消关注</string>
 </resources>

@@ -13,6 +13,7 @@ import com.freegeek.android.sheet.R;
 import com.freegeek.android.sheet.bean.Event;
 import com.freegeek.android.sheet.bean.User;
 import com.freegeek.android.sheet.service.LocationService;
+import com.freegeek.android.sheet.service.UserService;
 import com.freegeek.android.sheet.ui.dialog.LoadingDialog;
 import com.freegeek.android.sheet.ui.dialog.LoginDialog;
 import com.freegeek.android.sheet.util.APP;
@@ -41,7 +42,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void onEvent(Event event){
-        Logger.i("eventCode:" + event.getEventCode()+"-eventTag" + event.getTag().toString());
+        Logger.i("eventCode:" + event.getEventCode());
     }
 
     @Override
@@ -106,7 +107,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public User getCurrentUser(){
-        return BmobUser.getCurrentUser(this,User.class);
+        return UserService.user;
     }
 
 }

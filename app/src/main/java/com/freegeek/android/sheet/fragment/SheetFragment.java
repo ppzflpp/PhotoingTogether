@@ -44,7 +44,6 @@ public class SheetFragment extends BaseFragment {
 
 
     public SheetFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -64,6 +63,14 @@ public class SheetFragment extends BaseFragment {
         return view;
     }
 
+    public void onEvent(Event event){
+        switch (event.getEventCode()){
+            case Event.EVENT_DELETE_SHEET:
+            case Event.EVENT_PUSH_SHEET:
+                refreshData();
+                break;
+        }
+    }
 
     private MyMaterialList mListView;
     private void initView(View view){
@@ -79,9 +86,9 @@ public class SheetFragment extends BaseFragment {
             @Override
             public void onShowSheet() {
                 super.onShowSheet();
-                if(getCurrentUser() == null){
+                if (getCurrentUser() == null) {
                     materialSheetFab.hideSheet();
-                    BaseActivity.showLoginTip((BaseActivity)getActivity());
+                    BaseActivity.showLoginTip((BaseActivity) getActivity());
                     return;
                 }
             }
@@ -93,13 +100,13 @@ public class SheetFragment extends BaseFragment {
         sheetView.findViewById(R.id.fab_item_camera).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent();              // 指定开启系统相机的Action
+                Intent intent = new Intent();              // 指定开启系统相机的Action
                 intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
                 intent.addCategory(Intent.CATEGORY_DEFAULT);              // 根据文件地址创建文件
 
-                String name = System.currentTimeMillis()+"";
-                File file1= FileUtil.getImageFile(name);             // 把文件地址转换成Uri格式
-                Uri uri=Uri.fromFile(file1);             // 设置系统相机拍摄照片完成后图片文件的存放地址
+                String name = System.currentTimeMillis() + "";
+                File file1 = FileUtil.getImageFile(name);             // 把文件地址转换成Uri格式
+                Uri uri = Uri.fromFile(file1);             // 设置系统相机拍摄照片完成后图片文件的存放地址
 
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
 //                intent.putExtra(APP.EXTRA.FILE_NAME, name);
@@ -118,88 +125,85 @@ public class SheetFragment extends BaseFragment {
             }
         });
 
-        BmobQuery<Sheet> bmobQuery = new BmobQuery<>();
-        bmobQuery.addWhereEqualTo("author", getCurrentUser());
-        bmobQuery.order("-updatedAt");
-        bmobQuery.include("author,liker");// 希望在查询帖子信息的同时也把发布人的信息查询出来
-        bmobQuery.findObjects(getActivity(), new FindListener<Sheet>() {
-            @Override
-            public void onSuccess(final List<Sheet> sheets) {
-                for (Sheet sheet : sheets) {
-                    Card card = new Card.Builder(getActivity())
-                            .setTag("SHEET_CARD")
-                            .withProvider(new SheetCardProvider())
-                            .setTitle(sheet.getContent())
-                            .setLike(sheet.getLiker().contains(getCurrentUser().getObjectId()))
-                            .setCommentNumber(5)
-                            .setSheet(sheet)
-                            .setItemClickListener(new OnActionClickListener() {
-                                @Override
-                                public void onActionClicked(View view, Card card) {
-                                    Intent intent= new Intent(getActivity(), SheetShotActivity.class);
-                                    Bundle bundle = new Bundle();
-                                    bundle.putSerializable(SheetShotActivity.KEY_SHEET, ((SheetCardProvider) card.getProvider()).getSheet());
-                                    intent.putExtras(bundle);
-                                    startActivity(intent);
-                                }
-                            })
-                            .setLikeListener(new OnActionClickListener() {
-                                @Override
-                                public void onActionClicked(View view, Card card) {
+        refreshData();
 
-                                    final SheetCardProvider sheetCardProvider = (SheetCardProvider) card.getProvider();
-                                    if (sheetCardProvider.isLike()) {
-                                        UserService.getInstance(getContext()).removeLikeSheet(sheetCardProvider.getSheet(), new UpdateListener() {
-                                            @Override
-                                            public void onSuccess() {
-                                                sheetCardProvider.setLike(false);
-                                            }
-
-                                            @Override
-                                            public void onFailure(int i, String s) {
-                                                EventLog.BmobToastError(i, getActivity());
-                                            }
-                                        });
-
-                                    } else {
-                                        UserService.getInstance(getContext()).addLikeSheet(sheetCardProvider.getSheet(), new UpdateListener() {
-                                            @Override
-                                            public void onSuccess() {
-                                                sheetCardProvider.setLike(true);
-                                            }
-
-                                            @Override
-                                            public void onFailure(int i, String s) {
-                                                EventLog.BmobToastError(i, getActivity());
-                                            }
-                                        });
-                                    }
-
-                                }
-                            })
-                            .setDrawable(sheet.getPicture().getFileUrl(getActivity()))
-                            .setDrawableConfiguration(new CardProvider.OnImageConfigListener() {
-                                @Override
-                                public void onImageConfigure(@NonNull final RequestCreator requestCreator) {
-//                                    requestCreator.rotate(position * 45.0f)
-//                                            .resize(200, 200)
-//                                            .centerCrop();
-                                }
-                            })
-                            .endConfig()
-                            .build();
-                    mListView.getAdapter().add(card);
-                }
-
-            }
-
-            @Override
-            public void onError(int code, String msg) {
-                EventLog.BmobToastError(code, getActivity());
-            }
-        });
 
     }
 
+    public void refreshData(){
+        mListView.getAdapter().clearAll();
+        UserService.getInstance().getMySheet(new FindListener<Sheet>() {
+            @Override
+            public void onSuccess(List<Sheet> sheets) {
+                if (sheets.size() == 0) {
+                    findViewById(R.id.linear_tip).setVisibility(View.VISIBLE);
+                } else {
+                    findViewById(R.id.linear_tip).setVisibility(View.GONE);
+                    for (Sheet sheet : sheets) {
+                        Card card = new Card.Builder(getActivity())
+                                .setTag("SHEET_CARD")
+                                .withProvider(new SheetCardProvider())
+                                .setTitle(sheet.getContent())
+                                .setLike(getCurrentUser() == null ? false : getCurrentUser().getLikeSheet().contains(sheet.getObjectId()))
+                                .setSheet(sheet)
+                                .setItemClickListener(new OnActionClickListener() {
+                                    @Override
+                                    public void onActionClicked(View view, Card card) {
+                                        Intent intent = new Intent(getActivity(), SheetShotActivity.class);
+                                        Bundle bundle = new Bundle();
+                                        bundle.putSerializable(SheetShotActivity.KEY_SHEET, ((SheetCardProvider) card.getProvider()).getSheet());
+                                        intent.putExtras(bundle);
+                                        startActivity(intent);
+                                    }
+                                })
+                                .setLikeListener(new OnActionClickListener() {
+                                    @Override
+                                    public void onActionClicked(View view, Card card) {
+
+                                        final SheetCardProvider sheetCardProvider = (SheetCardProvider) card.getProvider();
+                                        if (sheetCardProvider.isLike()) {
+                                            UserService.getInstance().removeLikeSheet(sheetCardProvider.getSheet(), new UpdateListener() {
+                                                @Override
+                                                public void onSuccess() {
+                                                    sheetCardProvider.setLike(false);
+                                                }
+
+                                                @Override
+                                                public void onFailure(int i, String s) {
+                                                    EventLog.BmobToastError(i, getActivity());
+                                                }
+                                            });
+
+                                        } else {
+                                            UserService.getInstance().addLikeSheet(sheetCardProvider.getSheet(), new UpdateListener() {
+                                                @Override
+                                                public void onSuccess() {
+                                                    sheetCardProvider.setLike(true);
+                                                }
+
+                                                @Override
+                                                public void onFailure(int i, String s) {
+                                                    EventLog.BmobToastError(i, getActivity());
+                                                }
+                                            });
+                                        }
+
+                                    }
+                                })
+                                .setDrawable(sheet.getPicture().getFileUrl(getActivity()))
+                                .endConfig()
+                                .build();
+                        mListView.getAdapter().add(card);
+                    }
+
+                }
+            }
+
+            @Override
+            public void onError(int i, String s) {
+                EventLog.BmobToastError(i, getActivity());
+            }
+        });
+    }
 
 }

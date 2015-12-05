@@ -1,5 +1,9 @@
 package com.freegeek.android.sheet.bean;
 
+import com.freegeek.android.sheet.util.APP;
+
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import cn.bmob.v3.BmobUser;
@@ -10,7 +14,7 @@ import cn.bmob.v3.datatype.BmobRelation;
 /**
  * Created by rtugeek@gmail.com on 2015/11/6.
  */
-public class User extends BmobUser {
+public class User extends BmobUser implements Serializable{
     private String nick;
     /**
      * true 男 false 女
@@ -18,7 +22,8 @@ public class User extends BmobUser {
     private Boolean sex = true;
     private BmobFile avatar;
     private BmobRelation fans;
-    private BmobRelation follow;
+    private List<String> likeSheet = new ArrayList<>();
+    private List<String> follow = new ArrayList<>();
     private BmobGeoPoint location;
     private String  locationName;
 
@@ -70,12 +75,20 @@ public class User extends BmobUser {
         this.fans = fans;
     }
 
-    public BmobRelation getFollow() {
+    public List<String>  getFollow() {
         return follow;
     }
 
-    public void setFollow(BmobRelation follow) {
+    public void setFollow(List<String>  follow) {
         this.follow = follow;
+    }
+
+    public List<String> getLikeSheet() {
+        return likeSheet;
+    }
+
+    public void setLikeSheet(List<String> likeSheet) {
+        this.likeSheet = likeSheet;
     }
 
     @Override
@@ -89,5 +102,37 @@ public class User extends BmobUser {
         }catch (Exception e){
             return false;
         }
+    }
+
+    public boolean addFollow(String userId){
+        if(!follow.contains(userId)){
+            follow.add(userId);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean removeFollow(String userId){
+        if(follow.contains(userId)){
+            follow.remove(userId);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean addLikeSheet(String sheetId){
+        if(!likeSheet.contains(sheetId)){
+            likeSheet.add(sheetId);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean removeLikeSheet(String sheetId){
+        if(likeSheet.contains(sheetId)){
+            likeSheet.remove(sheetId);
+            return true;
+        }
+        return false;
     }
 }

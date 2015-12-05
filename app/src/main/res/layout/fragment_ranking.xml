@@ -2,14 +2,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.freegeek.android.sheet.fragment.LocationFragment">
+    tools:context="com.freegeek.android.sheet.fragment.RankingFragment">
 
+    <!-- TODO: Update blank fragment layout -->
     <com.freegeek.android.sheet.ui.MyMaterialList
         android:id="@+id/list_sheet"
-        app:column_count="3"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"></com.freegeek.android.sheet.ui.MyMaterialList>
 
-    </com.freegeek.android.sheet.ui.MyMaterialList>
 </FrameLayout>

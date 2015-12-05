@@ -1,9 +1,7 @@
 package com.freegeek.android.sheet.ui.dialog;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.annotation.NonNull;
 
 import com.freegeek.android.sheet.R;
 import com.freegeek.android.sheet.activity.BaseActivity;

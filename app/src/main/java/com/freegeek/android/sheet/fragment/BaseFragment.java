@@ -14,6 +14,7 @@ import com.freegeek.android.sheet.MyApplication;
 import com.freegeek.android.sheet.activity.BaseActivity;
 import com.freegeek.android.sheet.bean.Event;
 import com.freegeek.android.sheet.bean.User;
+import com.freegeek.android.sheet.service.UserService;
 
 import java.util.List;
 
@@ -91,7 +92,7 @@ public class BaseFragment extends Fragment {
     }
 
     protected User getCurrentUser(){
-        return MyApplication.currentUser;
+        return UserService.user;
     }
 
     public boolean isShowing() {

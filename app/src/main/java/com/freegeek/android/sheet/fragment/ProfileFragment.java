@@ -1,66 +1,42 @@
 package com.freegeek.android.sheet.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.freegeek.android.sheet.R;
+import com.freegeek.android.sheet.activity.BaseActivity;
 import com.freegeek.android.sheet.bean.Event;
 import com.freegeek.android.sheet.bean.User;
+import com.freegeek.android.sheet.service.UserService;
 import com.freegeek.android.sheet.util.EventLog;
 import com.github.siyamed.shapeimageview.CircularImageView;
-import com.nostra13.universalimageloader.core.ImageLoader;
 import com.rey.material.app.Dialog;
 import com.soundcloud.android.crop.Crop;
-
-import org.w3c.dom.Text;
+import com.squareup.picasso.Picasso;
 
 import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
 import de.greenrobot.event.EventBus;
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * to handle interaction events.
- * Use the {@link ProfileFragment#newInstance} factory method to
- * create an instance of this fragment.
+ *
  */
 public class ProfileFragment extends BaseFragment {
-    private CircularImageView mAcatar;
+    private CircularImageView mAvatar;
     private TextView mNick;
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    private String mParam1;
-    private String mParam2;
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ProfileFragment.
-     */
-    public static ProfileFragment newInstance(String param1, String param2) {
-        ProfileFragment fragment = new ProfileFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
+    private Button mButton;
+    private User mUser;
+    private boolean inited = false;
     public ProfileFragment() {
         // Required empty public constructor
     }
@@ -68,10 +44,6 @@ public class ProfileFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -84,11 +56,14 @@ public class ProfileFragment extends BaseFragment {
     }
 
     private void initView(View view){
-        mAcatar = (CircularImageView)view.findViewById(R.id.profile_img_avatar);
+        mAvatar = (CircularImageView)view.findViewById(R.id.profile_img_avatar);
         mNick = (TextView)view.findViewById(R.id.profile_txt_nick);
-        mAcatar.setOnClickListener(new View.OnClickListener() {
+        mButton = (Button) view.findViewById(R.id.profile_btn_bottom);
+
+        mAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!isMe()) return;
                 Crop.pickImage(getActivity());
             }
         });
@@ -96,8 +71,7 @@ public class ProfileFragment extends BaseFragment {
         mNick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final User user = BmobUser.getCurrentUser(getActivity(), User.class);
-                if(user== null) return;
+                if(!isMe()) return;
                 LayoutInflater layoutInflater1 = getActivity().getLayoutInflater();
                 View editNickView = layoutInflater1.inflate(R.layout.dialog_edit_nick, null);
                 final TextInputLayout nickInput = (TextInputLayout)editNickView.findViewById(R.id.dialog_nick_etx_nick);
@@ -105,7 +79,7 @@ public class ProfileFragment extends BaseFragment {
 
                 nickInput.setCounterEnabled(true);
                 nickInput.setCounterMaxLength(15);
-                editNick.setText(user.getNick());
+                editNick.setText(mUser.getNick());
 
                 editNick.addTextChangedListener(new TextWatcher() {
                     @Override
@@ -141,12 +115,12 @@ public class ProfileFragment extends BaseFragment {
                                     nickInput.setError(getString(R.string.error_nick_null));
                                 } else {
                                     showLoading();
-                                    user.setNick(nick);
-                                    user.update(getActivity(), new UpdateListener() {
+                                    mUser.setNick(nick);
+                                    mUser.update(getActivity(), new UpdateListener() {
                                         @Override
                                         public void onSuccess() {
                                             EventBus.getDefault().post(new Event(Event.EVENT_USER_PROFILE_UPDATE));
-                                            mNick.setText(user.getNick());
+                                            mNick.setText(mUser.getNick());
                                             dismissLoading();
                                             editNickDialog.dismiss();
                                         }
@@ -167,25 +141,89 @@ public class ProfileFragment extends BaseFragment {
                 }).show();
             }
         });
-        view.findViewById(R.id.profile_btn_sign_out).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                User user = BmobUser.getCurrentUser(getActivity(), User.class);
-                if (user != null){
-                    BmobUser.logOut(getActivity());
-                    EventBus.getDefault().post(new Event(Event.EVENT_USER_SIGN_OUT));
-                }
-            }
-        });
-
+        inited = true;
         refreshData();
     }
 
+
+    /**
+     * 判断是不是自己
+     * @return
+     */
+    private boolean isMe(){
+        if(getCurrentUser()!=null && mUser != null && mUser.getObjectId().equals(getCurrentUser().getObjectId())) return true;
+        return false;
+    }
+
+    /**
+     *刷新数据
+     */
     private void refreshData(){
-         User user = BmobUser.getCurrentUser(getActivity(), User.class);
-        if(user != null){
-            if(user.getAvatar() != null)  ImageLoader.getInstance().displayImage(user.getAvatar().getFileUrl(getActivity()),mAcatar);
-            mNick.setText(user.getNick());
+        if(mUser != null){
+            if(mUser.getAvatar() != null)
+                Picasso.with(getContext())
+                        .load(mUser.getAvatar()
+                        .getFileUrl(getActivity()))//TODO BUG
+                        .into(mAvatar);
+            mNick.setText(mUser.getNick());
+            if(isMe()){
+                mButton.setText(R.string.logout);
+                mButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        User user = BmobUser.getCurrentUser(getActivity(), User.class);
+                        if (user != null) {
+                            UserService.getInstance().logout();
+                        }
+                    }
+                });
+            }else{
+                if(getCurrentUser() !=null && mUser!= null && getCurrentUser().getFollow().contains(mUser.getObjectId())){
+                    mButton.setText(R.string.cancel_follow);
+                }else {
+                    mButton.setText(R.string.follow);
+                }
+                mButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(getCurrentUser() !=null && getCurrentUser().getFollow().contains(mUser.getObjectId())){
+                            if(getCurrentUser().removeFollow(mUser.getObjectId())){
+                                getCurrentUser().update(getActivity(), new UpdateListener() {
+                                    @Override
+                                    public void onSuccess() {
+                                        mButton.setText(R.string.follow);
+                                    }
+
+                                    @Override
+                                    public void onFailure(int i, String s) {
+                                        EventLog.BmobToastError(i, getActivity());
+                                    }
+                                });
+                            }
+                        }else{
+                            if(getCurrentUser() == null){
+                                BaseActivity.showLoginTip((BaseActivity) getActivity());
+                            }else{
+                                if(getCurrentUser().addFollow(mUser.getObjectId())){
+                                    getCurrentUser().update(getActivity(), new UpdateListener() {
+                                        @Override
+                                        public void onSuccess() {
+                                            mButton.setText(R.string.cancel_follow);
+                                        }
+
+                                        @Override
+                                        public void onFailure(int i, String s) {
+                                            EventLog.BmobToastError(i, s, getActivity());
+                                        }
+                                    });
+                                }
+                            }
+                            }
+
+                    }
+                });
+
+            }
         }
     }
 
@@ -197,5 +235,12 @@ public class ProfileFragment extends BaseFragment {
         }
     }
 
+    public User getUser() {
+        return mUser;
+    }
 
+    public void setUser(User mUser) {
+        this.mUser = mUser;
+        if(inited) refreshData();
+    }
 }

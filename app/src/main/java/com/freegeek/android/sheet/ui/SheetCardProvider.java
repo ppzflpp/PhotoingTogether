@@ -16,8 +16,9 @@ import com.freegeek.android.sheet.bean.Sheet;
  * Created by rtugeek on 15-12-2.
  */
 public class SheetCardProvider extends CardProvider<SheetCardProvider> {
-
-    private int commentNumber;
+    private String mRightTxt="";
+    private String mLeftTxt="";
+    private int mRightPic;
     private boolean like = false;
     private Sheet sheet;
     private Card mCard;
@@ -39,10 +40,14 @@ public class SheetCardProvider extends CardProvider<SheetCardProvider> {
     public void render(@NonNull View view, @NonNull Card card) {
         super.render(view, card);
         mCard =card;
-        TextView textView = (TextView)view.findViewById(R.id.txt_comment_number);
+        TextView textView = (TextView)view.findViewById(R.id.txt_right_content);
+        TextView leftTextView = (TextView)view.findViewById(R.id.txt_left_content);
         final ImageView imgLike = (ImageView)view.findViewById(R.id.img_like);
+        ImageView imgRight = (ImageView)view.findViewById(R.id.img_right_img);
 
-        textView.setText(String.valueOf(commentNumber));
+        imgRight.setImageResource(mRightPic);
+        leftTextView.setText(mLeftTxt);
+        textView.setText(mRightTxt);
         if(like){
             imgLike.setImageResource(R.drawable.ic_favorite_black_24dp);
         }else{
@@ -72,16 +77,6 @@ public class SheetCardProvider extends CardProvider<SheetCardProvider> {
                 mItemClickListener.onActionClicked(v, mCard);
             }
         }
-    }
-
-    public int getCommentNumber() {
-        return commentNumber;
-    }
-
-    public SheetCardProvider setCommentNumber(int commentNumber) {
-        this.commentNumber = commentNumber;
-        notifyDataSetChanged();
-        return this;
     }
 
     public boolean isLike() {
@@ -125,4 +120,23 @@ public class SheetCardProvider extends CardProvider<SheetCardProvider> {
         notifyDataSetChanged();
         return this;
     }
+
+    public SheetCardProvider setRightText(String txt){
+        mRightTxt =txt;
+        notifyDataSetChanged();
+        return this;
+    }
+
+    public SheetCardProvider setRightPic(int resId){
+        mRightPic = resId;
+        notifyDataSetChanged();
+        return this;
+    }
+
+    public SheetCardProvider setLeftText(String text){
+        mLeftTxt = text;
+        notifyDataSetChanged();
+        return this;
+    }
+
 }

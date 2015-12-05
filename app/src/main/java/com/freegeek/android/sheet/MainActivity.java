@@ -2,6 +2,7 @@ package com.freegeek.android.sheet;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,8 +18,11 @@ import com.freegeek.android.sheet.activity.PickLocationActivity;
 import com.freegeek.android.sheet.bean.Event;
 import com.freegeek.android.sheet.bean.User;
 import com.freegeek.android.sheet.fragment.BaseFragment;
+import com.freegeek.android.sheet.fragment.FollowFragment;
+import com.freegeek.android.sheet.fragment.LikeSheetFragment;
 import com.freegeek.android.sheet.fragment.LocationFragment;
 import com.freegeek.android.sheet.fragment.ProfileFragment;
+import com.freegeek.android.sheet.fragment.RankingFragment;
 import com.freegeek.android.sheet.fragment.SheetFragment;
 import com.freegeek.android.sheet.service.LocationService;
 import com.freegeek.android.sheet.service.UserService;
@@ -37,10 +41,10 @@ import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+import com.orhanobut.logger.Logger;
 import com.soundcloud.android.crop.Crop;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.io.File;
 
@@ -53,11 +57,13 @@ import de.greenrobot.event.EventBus;
 public class MainActivity extends BaseActivity {
     private Drawer mDrawer;
     private Toolbar mToolbar;
-    private User mUser;
     private AccountHeader mHeaderResult;
     private ProfileFragment mProfileFragment;
     private SheetFragment mSheetFragment;
     private LocationFragment mLocationFragment;
+    private RankingFragment mRankingFragment;
+    private FollowFragment mFollowFragment;
+    private LikeSheetFragment mLikeSheetFragment;
     private PostSheetDialog mPostSheetDialog;
 
     @Override
@@ -68,22 +74,27 @@ public class MainActivity extends BaseActivity {
         mToolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
         setSupportActionBar(mToolbar);
 
-        mUser = BmobUser.getCurrentUser(this, User.class);
         initFragments();
         initDrawerNavigation();
         refreshUser();
-        replaceFragment(mSheetFragment);
+        if(getCurrentUser() == null){
+            replaceFragment(mLocationFragment);
+        }else{
+            replaceFragment(mSheetFragment);
+        }
 
         LocationService.getInstance(this).getLocation();
-        UserService.getInstance(this).refreshLikeSheet();
+        UserService.getInstance().refreshLikeSheet();
 
-        startActivity(PickLocationActivity.class);
     }
 
     private void initFragments(){
         mProfileFragment = new ProfileFragment();
         mSheetFragment = new SheetFragment();
         mLocationFragment = new LocationFragment();
+        mRankingFragment = new RankingFragment();
+        mFollowFragment = new FollowFragment();
+        mLikeSheetFragment = new LikeSheetFragment();
     }
 
     /**
@@ -100,8 +111,11 @@ public class MainActivity extends BaseActivity {
                 .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
                     @Override
                     public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
-                        if(mUser == null) login();
-                        else  replaceFragment(mProfileFragment);
+                        if(getCurrentUser() == null) login();
+                        else {
+                            mProfileFragment.setUser(getCurrentUser());
+                            replaceFragment(mProfileFragment);
+                        }
                         return false;
                     }
                 })
@@ -109,8 +123,11 @@ public class MainActivity extends BaseActivity {
                 .withOnAccountHeaderSelectionViewClickListener(new AccountHeader.OnAccountHeaderSelectionViewClickListener() {
                     @Override
                     public boolean onClick(View view, IProfile profile) {
-                        if(mUser == null) login();
-                        else   replaceFragment(mProfileFragment);
+                        if(getCurrentUser() == null) login();
+                        else{
+                            mProfileFragment.setUser(getCurrentUser());
+                            replaceFragment(mProfileFragment);
+                        }
                         mDrawer.closeDrawer();
                         return false;
                     }
@@ -118,7 +135,7 @@ public class MainActivity extends BaseActivity {
                 .build();
 
         //if you want to update the items at a later time it is recommended to keep it in a variable
-        PrimaryDrawerItem itemMsg = new PrimaryDrawerItem().withIcon(R.drawable.ic_location_on_grey_24dp).withName("附近的人");
+        PrimaryDrawerItem itemMsg = new PrimaryDrawerItem().withIcon(R.drawable.ic_location_on_grey_24dp).withName(R.string.nearby);
         PrimaryDrawerItem itemRanking = new PrimaryDrawerItem().withIcon(R.drawable.ic_assessment_grey_24dp).withName(R.string.ranking_list);
         PrimaryDrawerItem itemFollow = new PrimaryDrawerItem().withIcon(R.drawable.ic_grade_grey_24dp).withName(R.string.my_foucs);
         PrimaryDrawerItem itemLike = new PrimaryDrawerItem().withIcon(R.drawable.ic_favorite_grey_24dp).withName(R.string.my_like);
@@ -143,15 +160,19 @@ public class MainActivity extends BaseActivity {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
                         // do something with the clicked item :D
-                        if (mUser == null) {
+                        if (getCurrentUser() == null) {
                             switch (position) {
                                 case 1:
                                     replaceFragment(mLocationFragment);
                                     break;
+                                case 2:
+                                    replaceFragment(mRankingFragment);
+                                    break;
                                 case 3:
+                                    BaseActivity.showLoginTip(MainActivity.this);
                                     break;
                                 case 4:
-                                    showToast(R.string.not_logined_in);
+                                    BaseActivity.showLoginTip(MainActivity.this);
                                     break;
                             }
                         } else {
@@ -159,10 +180,14 @@ public class MainActivity extends BaseActivity {
                                 case 1:
                                     replaceFragment(mLocationFragment);
                                     break;
+                                case 2:
+                                    replaceFragment(mRankingFragment);
+                                    break;
                                 case 3:
+                                    replaceFragment(mFollowFragment);
                                     break;
                                 case 4:
-                                    showToast(R.string.not_logined_in);
+                                    replaceFragment(mLikeSheetFragment);
                                     break;
                             }
                         }
@@ -180,39 +205,32 @@ public class MainActivity extends BaseActivity {
     }
 
     private void refreshUser(){
-        mUser = BmobUser.getCurrentUser(this,User.class);
         mHeaderResult.removeProfile(0);
-        if(mUser !=null){
-            IProfile iProfile = new ProfileDrawerItem().withName(mUser.getNick())
-                    .withEmail(mUser.getEmail())
+        if(getCurrentUser() !=null){
+            IProfile iProfile = new ProfileDrawerItem().withName(getCurrentUser().getNick())
+                    .withEmail(getCurrentUser().getEmail())
                     .withIcon(getResources().getDrawable(R.drawable.avatar));
-            if(mUser.getAvatar() != null ){
-                ImageLoader.getInstance().loadImage(mUser.getAvatar().getFileUrl(this), new ImageLoadingListener() {
+            if(getCurrentUser().getAvatar() != null ){
+                Picasso.with(this).load(getCurrentUser().getAvatar().getFileUrl(this)).error(R.drawable.avatar).into(new Target() {
                     @Override
-                    public void onLoadingStarted(String imageUri, View view) {
-
-                    }
-
-                    @Override
-                    public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-
-                    }
-
-                    @Override
-                    public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                         mHeaderResult.removeProfile(0);
-                        IProfile iProfile = new ProfileDrawerItem().withName(mUser.getNick())
-                                .withEmail(mUser.getEmail())
-                                .withIcon(loadedImage);
-                        mHeaderResult.addProfile(iProfile,0);
+                        IProfile iProfile = new ProfileDrawerItem().withName(getCurrentUser().getNick())
+                                .withEmail(getCurrentUser().getEmail())
+                                .withIcon(bitmap);
+                        mHeaderResult.addProfile(iProfile, 0);
                     }
 
                     @Override
-                    public void onLoadingCancelled(String imageUri, View view) {
+                    public void onBitmapFailed(Drawable errorDrawable) {
+
+                    }
+
+                    @Override
+                    public void onPrepareLoad(Drawable placeHolderDrawable) {
 
                     }
                 });
-
             }
             mHeaderResult.addProfile(iProfile,0);
         }else{
@@ -233,14 +251,17 @@ public class MainActivity extends BaseActivity {
         switch (event.getEventCode()){
             case Event.EVENT_USER_SIGN_IN:
             case Event.EVENT_USER_PROFILE_UPDATE:
+                refreshUser();
+                break;
             case Event.EVENT_USER_SIGN_OUT:
                 refreshUser();
+                replaceFragment(mLocationFragment);
                 break;
             case Event.EVENT_GET_CAMERA_SHEET_PHOTO:
                 mPhotoName = event.getTag().toString();
                 break;
             case Event.EVENT_GET_LOCATION:
-                MyApplication.updateUserLocation();
+                UserService.getInstance().updateUserLocation();
                 break;
 
         }
@@ -257,7 +278,11 @@ public class MainActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_homepage) {
-            replaceFragment(mSheetFragment);
+            if(getCurrentUser() == null){
+                replaceFragment(mLocationFragment);
+            }else {
+                replaceFragment(mSheetFragment);
+            }
             return true;
         }
 
@@ -269,6 +294,15 @@ public class MainActivity extends BaseActivity {
         super.onDestroy();
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        if(intent.getAction().equals(APP.ACTION.MAIN_ACTIVITY_FRAGMENT_PROFILE)){
+            mProfileFragment.setUser((User)intent.getExtras().getSerializable("user"));
+            replaceFragment(mProfileFragment);
+        }
+    }
 
     public void replaceFragment(Fragment fragment){
         FragmentTransaction transaction = getFragmentTransaction();
@@ -284,6 +318,8 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent result) {
+        Logger.i("requestCode:" +requestCode+"--resultCode:"+resultCode);
+
         if(resultCode != RESULT_OK) return;
         switch (requestCode) {
             case Crop.REQUEST_PICK:
@@ -302,10 +338,10 @@ public class MainActivity extends BaseActivity {
                     @Override
                     public void onSuccess() {
                         //删除旧头像
-                        if(mUser.getAvatar()!=null) {mUser.getAvatar().delete(getActivity());}
+                        if(getCurrentUser().getAvatar()!=null) {getCurrentUser().getAvatar().delete(getActivity());}
 
-                        mUser.setAvatar(bmobFile);
-                        mUser.update(getActivity(), mUser.getObjectId(), new UpdateListener() {
+                        getCurrentUser().setAvatar(bmobFile);
+                        getCurrentUser().update(getActivity(), getCurrentUser().getObjectId(), new UpdateListener() {
                             @Override
                             public void onSuccess() {
                                 EventBus.getDefault().post(new Event(Event.EVENT_USER_PROFILE_UPDATE));
@@ -314,7 +350,7 @@ public class MainActivity extends BaseActivity {
 
                             @Override
                             public void onFailure(int i, String s) {
-                                EventLog.BmobToastError(i,getActivity());
+                                EventLog.BmobToastError(i, getActivity());
                                 dismissLoading();
                             }
                         });

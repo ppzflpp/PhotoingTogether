@@ -15,6 +15,7 @@ import com.freegeek.android.sheet.R;
 import com.freegeek.android.sheet.activity.BaseActivity;
 import com.freegeek.android.sheet.bean.Event;
 import com.freegeek.android.sheet.bean.User;
+import com.freegeek.android.sheet.service.UserService;
 import com.freegeek.android.sheet.util.APP;
 import com.freegeek.android.sheet.util.EventLog;
 import com.freegeek.android.sheet.util.StringUtil;
@@ -144,14 +145,11 @@ public class LoginDialog extends Dialog {
                 }
                 baseActivity.showLoading();
                 final User user = getUser();
-                user.login(baseActivity, new SaveListener() {
+                UserService.getInstance().login(user, new SaveListener() {
                     @Override
                     public void onSuccess() {
-                        EventBus.getDefault().post(new Event(Event.EVENT_USER_SIGN_IN));
-                        MobclickAgent.onEvent(baseActivity, "UserLogin");
                         dismiss();
                         baseActivity.dismissLoading();
-                        Logger.i("user login succeed!");
                     }
 
                     @Override

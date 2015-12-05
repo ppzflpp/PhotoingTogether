@@ -55,21 +55,32 @@
                         android:layout_alignParentLeft="true"
                         android:layout_alignParentStart="true" />
 
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_chat_black_24dp"
-                        android:layout_alignParentTop="true"
-                        android:layout_toLeftOf="@+id/txt_comment_number"
-                        android:layout_toStartOf="@+id/txt_comment_number"
-                        android:id="@+id/img_comment" />
                     <TextView
+                        android:layout_marginLeft="6dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="0"
-                        android:id="@+id/txt_comment_number"
+                        android:id="@+id/txt_left_content"
+                        android:gravity="center_vertical"
+                        android:textColor="@android:color/black"
+                        android:layout_marginRight="6dp"
                         android:layout_alignParentTop="true"
-                        android:layout_alignBottom="@+id/img_comment"
+                        android:layout_toRightOf="@+id/img_like"
+                        android:layout_toEndOf="@+id/img_like"
+                        android:layout_alignBottom="@+id/img_like" />
+
+                    <ImageView
+                        android:tint="@android:color/black"
+                        android:layout_width="24dp"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_toLeftOf="@+id/txt_right_content"
+                        android:layout_toStartOf="@+id/txt_right_content"
+                        android:id="@+id/img_right_img" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="24dp"
+                        android:id="@+id/txt_right_content"
+                        android:layout_alignParentTop="true"
                         android:layout_alignParentRight="true"
                         android:layout_alignParentEnd="true"
                         android:gravity="center_vertical"
