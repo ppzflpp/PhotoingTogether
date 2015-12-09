@@ -136,6 +136,7 @@ public class SheetShotActivity extends BaseActivity {
         mLikeLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(getCurrentUser() == null) BaseActivity.showLoginTip(SheetShotActivity.this);
                 if (mSheet.getLiker().contains(getCurrentUser().getObjectId())) {
                     UserService.getInstance().removeLikeSheet(mSheet, new UpdateListener() {
                         @Override
@@ -145,7 +146,7 @@ public class SheetShotActivity extends BaseActivity {
 
                         @Override
                         public void onFailure(int i, String s) {
-                            EventLog.BmobToastError(i, getActivity());
+                               EventLog.BmobToastError(i,s, getActivity());
                         }
                     });
 
@@ -158,7 +159,7 @@ public class SheetShotActivity extends BaseActivity {
 
                         @Override
                         public void onFailure(int i, String s) {
-                            EventLog.BmobToastError(i, getActivity());
+                               EventLog.BmobToastError(i,s, getActivity());
                         }
                     });
                 }
@@ -188,7 +189,7 @@ public class SheetShotActivity extends BaseActivity {
 
                         @Override
                         public void onFailure(int i, String s) {
-                            EventLog.BmobToastError(i, getActivity());
+                               EventLog.BmobToastError(i,s, getActivity());
                             dismissLoading();
                         }
                     });
@@ -237,7 +238,7 @@ public class SheetShotActivity extends BaseActivity {
 
                             @Override
                             public void onFailure(int i, String s) {
-                                EventLog.BmobToastError(i, getActivity());
+                                   EventLog.BmobToastError(i,s, getActivity());
                                 dismissLoading();
                             }
                         });
@@ -278,7 +279,7 @@ public class SheetShotActivity extends BaseActivity {
 
             @Override
             public void onError(int i, String s) {
-                EventLog.BmobToastError(i,getActivity());
+                EventLog.BmobToastError(i,s,getActivity());
             }
         });
     }

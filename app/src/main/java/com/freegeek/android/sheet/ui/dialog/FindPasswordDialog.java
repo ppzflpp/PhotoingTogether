@@ -62,7 +62,7 @@ public class FindPasswordDialog extends BaseDialog {
                                     mEmailInput.setError(getString(R.string.this_mail_not_be_used));
                                     break;
                                 default:
-                                    EventLog.BmobToastError(code, getActivity());
+                                    EventLog.BmobToastError(code,e, getActivity());
                                     break;
                             }
                             dismissLoading();

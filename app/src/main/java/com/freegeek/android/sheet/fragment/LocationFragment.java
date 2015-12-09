@@ -83,7 +83,6 @@ public class LocationFragment extends BaseFragment {
                     }else{
                         disTxt = (int)dis / 1000 +"Km";
                     }
-                    Logger.i("Distance : " + dis);
                     Card card = new Card.Builder(getActivity())
                             .setTag("SHEET_LOCATION_CARD")
                             .withProvider(new SheetCardProvider())
@@ -115,7 +114,7 @@ public class LocationFragment extends BaseFragment {
 
                                             @Override
                                             public void onFailure(int i, String s) {
-                                                EventLog.BmobToastError(i, getActivity());
+                                                EventLog.BmobToastError(i, s,getActivity());
                                             }
                                         });
 
@@ -128,7 +127,7 @@ public class LocationFragment extends BaseFragment {
 
                                             @Override
                                             public void onFailure(int i, String s) {
-                                                EventLog.BmobToastError(i, getActivity());
+                                                EventLog.BmobToastError(i,s, getActivity());
                                             }
                                         });
                                     }
@@ -144,7 +143,7 @@ public class LocationFragment extends BaseFragment {
 
             @Override
             public void onError(int i, String s) {
-                EventLog.BmobToastError(i, getActivity());
+                EventLog.BmobToastError(i,s, getActivity());
             }
         });
     }

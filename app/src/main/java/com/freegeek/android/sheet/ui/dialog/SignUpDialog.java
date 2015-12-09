@@ -185,7 +185,7 @@ public class SignUpDialog extends BaseDialog {
                                 dismissLoading();
                                 break;
                             default:
-                                EventLog.BmobToastError(i, getActivity());
+                                EventLog.BmobToastError(i,s, getActivity());
                                 dismissLoading();
                                 break;
                         }

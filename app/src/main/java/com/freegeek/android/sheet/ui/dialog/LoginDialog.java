@@ -160,7 +160,7 @@ public class LoginDialog extends Dialog {
                                 break;
                             default:
                                 Logger.i(s);
-                                EventLog.BmobToastError(i, baseActivity);
+                                EventLog.BmobToastError(i,s, baseActivity);
                                 break;
                         }
                         baseActivity.dismissLoading();

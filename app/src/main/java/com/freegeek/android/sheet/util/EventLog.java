@@ -12,13 +12,10 @@ import com.rey.material.widget.SnackBar;
  */
 public class EventLog {
     public static boolean debug = true;
-    
-    public static void BmobToastError(int code,Activity activity){
-        BmobToastError(code,"",activity);
-    }
+
 
     public static void BmobToastError(int code,String content,Activity activity){
-        Logger.i("BmobError:   " + code +"-Content" + content);
+        Logger.i("BmobError:   " + code +"-Content:" + content);
         SnackBar snackBar = SnackBar.make(activity).applyStyle(R.style.SnackBarMultiLine);
         switch (code){
             case 205:
