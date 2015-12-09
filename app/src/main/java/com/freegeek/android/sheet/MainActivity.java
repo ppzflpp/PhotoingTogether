@@ -205,6 +205,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void refreshUser(){
+        //refresh test
         mHeaderResult.removeProfile(0);
         if(getCurrentUser() !=null){
             IProfile iProfile = new ProfileDrawerItem().withName(getCurrentUser().getNick())

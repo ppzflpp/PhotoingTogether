@@ -61,7 +61,7 @@ public class RankingFragment extends BaseFragment {
                             .setTag("SHEET_RANKING_CARD")
                             .withProvider(new SheetCardProvider())
                             .setTitle(sheet.getContent())
-                            .setLike(sheet.getLiker().contains(getCurrentUser().getObjectId()))
+                            .setLike( sheet.getLiker().contains(getCurrentUser().getObjectId()))
                             .setLeftText(String.valueOf(sheet.getLiker().size()))
                             .setSheet(sheet)
                             .setItemClickListener(new OnActionClickListener() {
