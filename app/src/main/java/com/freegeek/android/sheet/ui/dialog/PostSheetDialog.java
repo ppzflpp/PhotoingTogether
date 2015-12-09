@@ -103,7 +103,7 @@ public class PostSheetDialog extends BaseDialog {
                             @Override
                             public void onFailure(int i, String s) {
                                 Logger.i(s);
-                                EventLog.BmobToastError(i, getActivity());
+                                EventLog.BmobToastError(i, s,getActivity());
                                 dismissLoading();
                             }
                         });

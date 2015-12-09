@@ -115,7 +115,7 @@ public class LocationFragment extends BaseFragment {
 
                                             @Override
                                             public void onFailure(int i, String s) {
-                                                EventLog.BmobToastError(i, getActivity());
+                                                EventLog.BmobToastError(i, s,getActivity());
                                             }
                                         });
 
@@ -128,7 +128,7 @@ public class LocationFragment extends BaseFragment {
 
                                             @Override
                                             public void onFailure(int i, String s) {
-                                                EventLog.BmobToastError(i, getActivity());
+                                                EventLog.BmobToastError(i,s, getActivity());
                                             }
                                         });
                                     }
@@ -144,7 +144,7 @@ public class LocationFragment extends BaseFragment {
 
             @Override
             public void onError(int i, String s) {
-                EventLog.BmobToastError(i, getActivity());
+                EventLog.BmobToastError(i,s, getActivity());
             }
         });
     }

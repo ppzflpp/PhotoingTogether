@@ -127,7 +127,7 @@ public class ProfileFragment extends BaseFragment {
 
                                         @Override
                                         public void onFailure(int i, String s) {
-                                            EventLog.BmobToastError(i, getActivity());
+                                            EventLog.BmobToastError(i,s, getActivity());
                                             dismissLoading();
                                         }
                                     });
@@ -196,7 +196,7 @@ public class ProfileFragment extends BaseFragment {
 
                                     @Override
                                     public void onFailure(int i, String s) {
-                                        EventLog.BmobToastError(i, getActivity());
+                                        EventLog.BmobToastError(i,s, getActivity());
                                     }
                                 });
                             }

@@ -225,7 +225,7 @@ public class UserService {
             bmobGeoPoint.setLongitude(LocationService.location.getLongitude());
             bmobGeoPoint.setLatitude(LocationService.location.getLatitude());
             user.setLocation(bmobGeoPoint);
-            user.update(mContext, user.getObjectId(), new UpdateListener() {
+            user.update(mContext, new UpdateListener() {
                 @Override
                 public void onSuccess() {
                     Logger.i("UPDATE USER LOCATION SUCCEED!");

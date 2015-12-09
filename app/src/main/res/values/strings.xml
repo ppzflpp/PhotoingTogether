@@ -17,7 +17,6 @@
     <string name="error_null_password">密码不能为空</string>
     <string name="error_null_username_or_password">用户名或密码不能为空</string>
     <string name="email">邮箱</string>
-    <string name="confirm_password">确认密码</string>
     <string name="eror_diff_password">两次密码不一致</string>
     <string name="error_password_length">密码不能小于六位</string>
     <string name="profile">个人资料</string>
@@ -27,7 +26,7 @@
     <string name="homepage">主页</string>
     <string name="input_your_email">请输入您的邮箱</string>
     <string name="gallery">相册</string>
-    <string name="camera">相机</string>
+    <string name="camera">Camera</string>
     <string name="Thought">说说你此刻的感想:</string>
     <string name="title_activity_new_sheet">NewSheetActivity</string>
     <string name="title_activity_pick_location">Location</string>
@@ -40,11 +39,14 @@
     <string name="share">分享</string>
     <string name="alert_null_text">不能为空</string>
     <string name="hint_140_char">140个字符</string>
-    <string name="comment">评论</string>
-    <string name="delete">删除</string>
     <string name="delete_this_photo">删除这张照片？</string>
     <string name="delete_this_picture">删除这张照片？</string>
     <string name="nearby">附近的</string>
     <string name="follow">关注</string>
-    <string name="cancel_follow">取消关注</string>
+    <string name="cancel">Cancel</string>
+    <string name="cancel_follow">Cancel follow</string>
+    <string name="comment">Comment</string>
+    <string name="confirm">Confirm</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="delete">Delete</string>
 </resources>

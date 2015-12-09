@@ -18,8 +18,10 @@ import com.freegeek.android.sheet.service.UserService;
 import com.freegeek.android.sheet.ui.MyMaterialList;
 import com.freegeek.android.sheet.ui.SheetCardProvider;
 import com.freegeek.android.sheet.util.EventLog;
+import com.freegeek.android.sheet.util.SheetComparator;
 import com.squareup.picasso.RequestCreator;
 
+import java.util.Collections;
 import java.util.List;
 
 import cn.bmob.v3.BmobQuery;
@@ -56,12 +58,14 @@ public class RankingFragment extends BaseFragment {
         bmobQuery.findObjects(getActivity(), new FindListener<Sheet>() {
             @Override
             public void onSuccess(final List<Sheet> sheets) {
+                SheetComparator sheetComparator = new SheetComparator();
+                Collections.sort(sheets,sheetComparator);
                 for (Sheet sheet : sheets) {
                     Card card = new Card.Builder(getActivity())
                             .setTag("SHEET_RANKING_CARD")
                             .withProvider(new SheetCardProvider())
                             .setTitle(sheet.getContent())
-                            .setLike(sheet.getLiker().contains(getCurrentUser().getObjectId()))
+                            .setLike(getCurrentUser() == null ? false:sheet.getLiker().contains(getCurrentUser().getObjectId()))
                             .setLeftText(String.valueOf(sheet.getLiker().size()))
                             .setSheet(sheet)
                             .setItemClickListener(new OnActionClickListener() {
@@ -88,7 +92,7 @@ public class RankingFragment extends BaseFragment {
 
                                             @Override
                                             public void onFailure(int i, String s) {
-                                                EventLog.BmobToastError(i, getActivity());
+                                                   EventLog.BmobToastError(i,s, getActivity());
                                             }
                                         });
 
@@ -101,7 +105,7 @@ public class RankingFragment extends BaseFragment {
 
                                             @Override
                                             public void onFailure(int i, String s) {
-                                                EventLog.BmobToastError(i, getActivity());
+                                                   EventLog.BmobToastError(i,s, getActivity());
                                             }
                                         });
                                     }
@@ -126,7 +130,7 @@ public class RankingFragment extends BaseFragment {
 
             @Override
             public void onError(int code, String msg) {
-                EventLog.BmobToastError(code, getActivity());
+                EventLog.BmobToastError(code, msg,getActivity());
             }
         });
     }

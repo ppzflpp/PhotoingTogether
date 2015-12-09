@@ -65,7 +65,7 @@ public class MainActivity extends BaseActivity {
     private FollowFragment mFollowFragment;
     private LikeSheetFragment mLikeSheetFragment;
     private PostSheetDialog mPostSheetDialog;
-
+    private IProfile iProfile;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,7 +101,7 @@ public class MainActivity extends BaseActivity {
      * 初始化抽屉导航
      */
     private void initDrawerNavigation() {
-        IProfile iProfile = new ProfileDrawerItem().withName(getString(R.string.not_logined_in))
+        iProfile = new ProfileDrawerItem().withName(getString(R.string.not_logined_in))
                 .withEmail(getString(R.string.tab_here_get_more_fun))
                 .withIcon(getResources().getDrawable(R.drawable.avatar));
         mHeaderResult = new AccountHeaderBuilder()
@@ -205,20 +205,19 @@ public class MainActivity extends BaseActivity {
     }
 
     private void refreshUser(){
-        mHeaderResult.removeProfile(0);
+//        mHeaderResult.removeProfile(iProfile);
         if(getCurrentUser() !=null){
-            IProfile iProfile = new ProfileDrawerItem().withName(getCurrentUser().getNick())
-                    .withEmail(getCurrentUser().getEmail())
-                    .withIcon(getResources().getDrawable(R.drawable.avatar));
+            iProfile.withName(getCurrentUser().getNick());
+            iProfile.withEmail(getCurrentUser().getEmail());
+            iProfile.withIcon(getResources().getDrawable(R.drawable.avatar));
             if(getCurrentUser().getAvatar() != null ){
                 Picasso.with(this).load(getCurrentUser().getAvatar().getFileUrl(this)).error(R.drawable.avatar).into(new Target() {
                     @Override
                     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                        mHeaderResult.removeProfile(0);
-                        IProfile iProfile = new ProfileDrawerItem().withName(getCurrentUser().getNick())
-                                .withEmail(getCurrentUser().getEmail())
-                                .withIcon(bitmap);
-                        mHeaderResult.addProfile(iProfile, 0);
+                        iProfile.withName(getCurrentUser().getNick());
+                        iProfile.withEmail(getCurrentUser().getEmail());
+                        iProfile.withIcon(bitmap);
+                        mHeaderResult.updateProfile(iProfile);
                     }
 
                     @Override
@@ -232,13 +231,12 @@ public class MainActivity extends BaseActivity {
                     }
                 });
             }
-            mHeaderResult.addProfile(iProfile,0);
         }else{
-            IProfile iProfile = new ProfileDrawerItem().withName(getString(R.string.not_logined_in))
-                    .withEmail(getString(R.string.tab_here_get_more_fun))
-                    .withIcon(getResources().getDrawable(R.drawable.avatar));
-            mHeaderResult.addProfile(iProfile,0);
+            iProfile.withName(getString(R.string.not_logined_in));
+            iProfile.withEmail(getString(R.string.tab_here_get_more_fun));
+            iProfile.withIcon(getResources().getDrawable(R.drawable.avatar));
         }
+        mHeaderResult.updateProfile(iProfile);
     }
 
     private void login(){
@@ -350,7 +348,7 @@ public class MainActivity extends BaseActivity {
 
                             @Override
                             public void onFailure(int i, String s) {
-                                EventLog.BmobToastError(i, getActivity());
+                                EventLog.BmobToastError(i, s,getActivity());
                                 dismissLoading();
                             }
                         });
@@ -358,7 +356,7 @@ public class MainActivity extends BaseActivity {
 
                     @Override
                     public void onFailure(int i, String s) {
-                        EventLog.BmobToastError(i,getActivity());
+                        EventLog.BmobToastError(i,s,getActivity());
                         dismissLoading();
                     }
                 });

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">一张</string>
+    <string name="app_name">一起拍</string>
     <string name="error_data">数据异常</string>
     <string name="error_email_used">邮箱已被使用</string>
     <string name="error_mail_format">邮箱格式不正确</string>
@@ -27,4 +27,9 @@
     <string name="title_activity_pick_location">定位</string>
     <string name="title_activity_new_sheet"></string>
     <string name="this_mail_not_be_used">该邮箱没有被使用！</string>
+    <string name="camera">相机</string>
+    <string name="cancel_follow">取消关注</string>
+    <string name="comment">评论</string>
+    <string name="confirm_password">确认密码</string>
+    <string name="delete">删除</string>
 </resources>
