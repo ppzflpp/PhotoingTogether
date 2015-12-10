@@ -162,7 +162,9 @@ public class FileUtil {
     }
 
     public static File getImageFile(String name){
-        return new File(IMAGE_PATH + name + ".png");
+        File file = new File(IMAGE_PATH + name + ".png");
+        makePath(file);
+        return file;
     }
 
     /**

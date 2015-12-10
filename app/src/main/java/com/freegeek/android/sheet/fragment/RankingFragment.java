@@ -4,6 +4,8 @@ package com.freegeek.android.sheet.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +21,7 @@ import com.freegeek.android.sheet.ui.MyMaterialList;
 import com.freegeek.android.sheet.ui.SheetCardProvider;
 import com.freegeek.android.sheet.util.EventLog;
 import com.freegeek.android.sheet.util.SheetComparator;
+import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 
 import java.util.Collections;
@@ -33,9 +36,8 @@ import cn.bmob.v3.listener.UpdateListener;
  */
 public class RankingFragment extends BaseFragment {
 
-
     private MyMaterialList mSheetMyMaterialList;
-
+    private LinearLayoutManager linearLayoutManager;
     public RankingFragment() {
         // Required empty public constructor
     }
@@ -51,27 +53,30 @@ public class RankingFragment extends BaseFragment {
     }
 
     public void init(View view){
+        linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mSheetMyMaterialList = (MyMaterialList) view.findViewById(R.id.list_sheet);
+        mSheetMyMaterialList.getRecyclerView().setLayoutManager(linearLayoutManager);
         BmobQuery<Sheet> bmobQuery = new BmobQuery<>();
-        bmobQuery.order("-likerNumber");
         bmobQuery.include("author");
+        bmobQuery.setLimit(10);
         bmobQuery.findObjects(getActivity(), new FindListener<Sheet>() {
             @Override
             public void onSuccess(final List<Sheet> sheets) {
                 SheetComparator sheetComparator = new SheetComparator();
                 Collections.sort(sheets,sheetComparator);
-                for (Sheet sheet : sheets) {
+                for (final Sheet sheet : sheets) {
                     Card card = new Card.Builder(getActivity())
                             .setTag("SHEET_RANKING_CARD")
                             .withProvider(new SheetCardProvider())
                             .setTitle(sheet.getContent())
-                            .setLike(getCurrentUser() == null ? false:sheet.getLiker().contains(getCurrentUser().getObjectId()))
+                            .setLike(getCurrentUser() == null ? false : sheet.getLiker().contains(getCurrentUser().getObjectId()))
                             .setLeftText(String.valueOf(sheet.getLiker().size()))
                             .setSheet(sheet)
                             .setItemClickListener(new OnActionClickListener() {
                                 @Override
                                 public void onActionClicked(View view, Card card) {
-                                    Intent intent= new Intent(getActivity(), SheetShotActivity.class);
+                                    Intent intent = new Intent(getActivity(), SheetShotActivity.class);
                                     Bundle bundle = new Bundle();
                                     bundle.putSerializable(SheetShotActivity.KEY_SHEET, ((SheetCardProvider) card.getProvider()).getSheet());
                                     intent.putExtras(bundle);
@@ -81,18 +86,19 @@ public class RankingFragment extends BaseFragment {
                             .setLikeListener(new OnActionClickListener() {
                                 @Override
                                 public void onActionClicked(View view, Card card) {
-
                                     final SheetCardProvider sheetCardProvider = (SheetCardProvider) card.getProvider();
                                     if (sheetCardProvider.isLike()) {
                                         UserService.getInstance().removeLikeSheet(sheetCardProvider.getSheet(), new UpdateListener() {
                                             @Override
                                             public void onSuccess() {
                                                 sheetCardProvider.setLike(false);
+                                                sheetCardProvider.setLeftText(sheet.getLiker().size() + "");
+                                                mSheetMyMaterialList.getAdapter().notifyDataSetChanged();
                                             }
 
                                             @Override
                                             public void onFailure(int i, String s) {
-                                                   EventLog.BmobToastError(i,s, getActivity());
+                                                EventLog.BmobToastError(i, s, getActivity());
                                             }
                                         });
 
@@ -101,11 +107,13 @@ public class RankingFragment extends BaseFragment {
                                             @Override
                                             public void onSuccess() {
                                                 sheetCardProvider.setLike(true);
+                                                sheetCardProvider.setLeftText(sheet.getLiker().size() + "");
+                                                mSheetMyMaterialList.getAdapter().notifyDataSetChanged();
                                             }
 
                                             @Override
                                             public void onFailure(int i, String s) {
-                                                   EventLog.BmobToastError(i,s, getActivity());
+                                                EventLog.BmobToastError(i, s, getActivity());
                                             }
                                         });
                                     }
@@ -124,6 +132,8 @@ public class RankingFragment extends BaseFragment {
                             .endConfig()
                             .build();
                     mSheetMyMaterialList.getAdapter().add(card);
+                    linearLayoutManager.scrollToPosition(0);
+
                 }
 
             }

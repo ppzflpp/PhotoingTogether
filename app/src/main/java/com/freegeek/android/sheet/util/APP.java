@@ -16,6 +16,9 @@ public class APP {
     public static final class KEY{
         public static final String USERNAME = "USERNAME";
         public static final String TIP_LOCATION = "TIP_LOCATION";
+        public static final String TIP_PICK_LOCATION = "TIP_PICK_LOCATION";
+        public static final String TIP_DRAG = "TIP_DRAG";
+        public static final String THEME = "THEME";
     }
 
     public static final class REQUEST{

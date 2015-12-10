@@ -26,6 +26,7 @@ import de.greenrobot.event.EventBus;
  */
 public class BaseFragment extends Fragment {
     protected boolean showing = false;
+    private View mView;
     @Override
     public void onDetach() {
         super.onDetach();
@@ -37,6 +38,12 @@ public class BaseFragment extends Fragment {
         super.onAttach(context);
         EventBus.getDefault().register(this);
     }
+
+
+    public void setView(View view){
+        mView = view;
+    }
+
 
     @Override
     public void onResume() {
@@ -88,6 +95,7 @@ public class BaseFragment extends Fragment {
     }
 
     protected View findViewById(int id){
+        if(getView() == null) return mView.findViewById(id);
         return  getView().findViewById(id);
     }
 

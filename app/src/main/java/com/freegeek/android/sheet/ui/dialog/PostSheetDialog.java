@@ -87,7 +87,7 @@ public class PostSheetDialog extends BaseDialog {
                         sheet.setAuthor(getCurrentUser());
                         sheet.setContent(mEditText.getText().toString());
                         sheet.setPicture(bmobFile);
-                        sheet.setLocationName(mTxtLocation.getText().toString());
+                        sheet.setLocationName(mLocation.getLocationDescribe());
                         //添加地理位置
                         BmobGeoPoint bmobGeoPoint =new BmobGeoPoint(mLocation.getLongitude(),mLocation.getLatitude());
                         sheet.setLocation(bmobGeoPoint);
@@ -122,6 +122,7 @@ public class PostSheetDialog extends BaseDialog {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), PickLocationActivity.class);
                 getActivity().startActivityForResult(intent, APP.REQUEST.CODE_PICK_LOCATION);
+                spe.putBoolean(APP.KEY.TIP_PICK_LOCATION, true).commit();
             }
         });
 
@@ -135,7 +136,11 @@ public class PostSheetDialog extends BaseDialog {
     public void setLocation(BDLocation bdLocation){
         mLocation = bdLocation;
         if(mLocation != null){
-            mTxtLocation.setText(mLocation.getLocationDescribe());
+            String s = mLocation.getLocationDescribe();
+            if(!sp.getBoolean(APP.KEY.TIP_PICK_LOCATION,false)){
+                s += getString(R.string.tip_pick_location);
+            }
+            mTxtLocation.setText(s);
         }
     }
 

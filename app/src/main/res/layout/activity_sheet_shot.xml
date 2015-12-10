@@ -22,19 +22,29 @@
             app:layout_collapseMode="parallax"
             app:layout_scrollFlags="scroll|enterAlways|exitUntilCollapsed">
             <LinearLayout
+
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:scaleType="fitXY"
+                    android:scaleType="centerCrop"
+                    android:maxHeight="520dp"
                     app:layout_collapseMode="parallax"
                     android:contentDescription="@null"
                     android:adjustViewBounds="true"
                     android:id="@+id/img_sheet"
                     />
 
+                <TextView
+                    android:id="@+id/txt_tip_drag"
+                    android:background="#f5f5f5"
+                    android:textColor="@android:color/black"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tip_try_drag"/>
 
                 <LinearLayout
                     android:background="#f5f5f5"
@@ -87,7 +97,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="@android:color/black"
-                            android:id="@+id/txt_right_content"
+                            android:id="@+id/txt_comment_number"
                             android:text="0"/>
                     </LinearLayout>
 
@@ -138,7 +148,7 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
             <LinearLayout
                 android:gravity="center_vertical"
                 android:padding="16dp"
@@ -146,6 +156,7 @@
                 android:background="#f5f5f5"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
+
                 <com.github.siyamed.shapeimageview.CircularImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
@@ -169,8 +180,7 @@
 
             </LinearLayout>
 
-            <android.support.v7.widget.RecyclerView
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            <ListView
                 android:scrollbars="vertical"
                 android:id="@+id/list_comment"
                 android:layout_width="match_parent"

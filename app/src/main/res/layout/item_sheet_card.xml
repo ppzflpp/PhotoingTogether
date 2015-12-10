@@ -45,6 +45,7 @@
                     android:paddingRight="6dp"
                     android:paddingBottom="6dp">
                     <ImageView
+                        android:background="@drawable/bg_sheet_card_btn"
                         android:focusable="true"
                         android:clickable="true"
                         android:layout_width="24dp"

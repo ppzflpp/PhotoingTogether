@@ -74,11 +74,12 @@ public class MainActivity extends BaseActivity {
         mToolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
         setSupportActionBar(mToolbar);
 
+
         initFragments();
         initDrawerNavigation();
         refreshUser();
         if(getCurrentUser() == null){
-            replaceFragment(mLocationFragment);
+            replaceFragment(mRankingFragment);
         }else{
             replaceFragment(mSheetFragment);
         }
@@ -139,7 +140,6 @@ public class MainActivity extends BaseActivity {
         PrimaryDrawerItem itemRanking = new PrimaryDrawerItem().withIcon(R.drawable.ic_assessment_grey_24dp).withName(R.string.ranking_list);
         PrimaryDrawerItem itemFollow = new PrimaryDrawerItem().withIcon(R.drawable.ic_grade_grey_24dp).withName(R.string.my_foucs);
         PrimaryDrawerItem itemLike = new PrimaryDrawerItem().withIcon(R.drawable.ic_favorite_grey_24dp).withName(R.string.my_like);
-        SecondaryDrawerItem itemTheme = new SecondaryDrawerItem().withName(R.string.theme);
 
         // Create the AccountHeader
 
@@ -153,8 +153,7 @@ public class MainActivity extends BaseActivity {
                         itemRanking,
                         itemFollow,
                         itemLike,
-                        new DividerDrawerItem(),
-                        itemTheme
+                        new DividerDrawerItem()
                 )
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
@@ -205,7 +204,6 @@ public class MainActivity extends BaseActivity {
     }
 
     private void refreshUser(){
-//        mHeaderResult.removeProfile(iProfile);
         if(getCurrentUser() !=null){
             iProfile.withName(getCurrentUser().getNick());
             iProfile.withEmail(getCurrentUser().getEmail());
@@ -214,8 +212,6 @@ public class MainActivity extends BaseActivity {
                 Picasso.with(this).load(getCurrentUser().getAvatar().getFileUrl(this)).error(R.drawable.avatar).into(new Target() {
                     @Override
                     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                        iProfile.withName(getCurrentUser().getNick());
-                        iProfile.withEmail(getCurrentUser().getEmail());
                         iProfile.withIcon(bitmap);
                         mHeaderResult.updateProfile(iProfile);
                     }
@@ -253,7 +249,7 @@ public class MainActivity extends BaseActivity {
                 break;
             case Event.EVENT_USER_SIGN_OUT:
                 refreshUser();
-                replaceFragment(mLocationFragment);
+                replaceFragment(mRankingFragment);
                 break;
             case Event.EVENT_GET_CAMERA_SHEET_PHOTO:
                 mPhotoName = event.getTag().toString();
@@ -277,7 +273,7 @@ public class MainActivity extends BaseActivity {
         int id = item.getItemId();
         if (id == R.id.action_homepage) {
             if(getCurrentUser() == null){
-                replaceFragment(mLocationFragment);
+                replaceFragment(mRankingFragment);
             }else {
                 replaceFragment(mSheetFragment);
             }

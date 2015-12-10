@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 
 
 import com.freegeek.android.sheet.R;
@@ -19,6 +20,15 @@ import com.freegeek.android.sheet.ui.dialog.LoginDialog;
 import com.freegeek.android.sheet.util.APP;
 import com.orhanobut.logger.Logger;
 import com.rey.material.widget.SnackBar;
+import com.umeng.socialize.bean.SHARE_MEDIA;
+import com.umeng.socialize.controller.UMServiceFactory;
+import com.umeng.socialize.controller.UMSocialService;
+import com.umeng.socialize.media.UMImage;
+import com.umeng.socialize.sso.EmailHandler;
+import com.umeng.socialize.sso.QZoneSsoHandler;
+import com.umeng.socialize.sso.SmsHandler;
+import com.umeng.socialize.sso.UMQQSsoHandler;
+import com.umeng.socialize.weixin.controller.UMWXHandler;
 
 import cn.bmob.v3.BmobUser;
 import de.greenrobot.event.EventBus;
@@ -108,6 +118,44 @@ public class BaseActivity extends AppCompatActivity {
 
     public User getCurrentUser(){
         return UserService.user;
+    }
+
+    public void share(String content,String url){
+        // 首先在您的Activity中添加如下成员变量
+        final UMSocialService mController = UMServiceFactory.getUMSocialService("com.umeng.share");
+        // 设置分享内容
+        mController.setShareContent(TextUtils.isEmpty(content) ? "  ":content);
+        // 设置分享图片, 参数2为图片的url地址
+        mController.setShareMedia(new UMImage(getActivity(),url));
+        mController.getConfig().removePlatform( SHARE_MEDIA.WEIXIN, SHARE_MEDIA.WEIXIN_CIRCLE,SHARE_MEDIA.SINA,SHARE_MEDIA.TENCENT);
+//        // 添加微信平台
+//        String appID = "wx967daebe835fbeac";
+//        String appSecret = "5fa9e68ca3970e87a1f83e563c8dcbce";
+//        UMWXHandler wxHandler = new UMWXHandler(getActivity(),appID,appSecret);
+//        wxHandler.addToSocialSDK();
+//        // 添加微信朋友圈
+//        UMWXHandler wxCircleHandler = new UMWXHandler(getActivity(),appID,appSecret);
+//        wxCircleHandler.setToCircle(true);
+//        wxCircleHandler.addToSocialSDK();
+//参数1为当前Activity，参数2为开发者在QQ互联申请的APP ID，参数3为开发者在QQ互联申请的APP kEY.
+        //添加QQ
+        UMQQSsoHandler qqSsoHandler = new UMQQSsoHandler(getActivity(), "100424468",
+                "c7394704798a158208a74ab60104f0ba");
+        qqSsoHandler.addToSocialSDK();
+        //添加QQ空间
+        QZoneSsoHandler qZoneSsoHandler = new QZoneSsoHandler(getActivity(), "100424468",
+                "c7394704798a158208a74ab60104f0ba");
+        qZoneSsoHandler.addToSocialSDK();
+        //添加短信
+        SmsHandler smsHandler = new SmsHandler();
+        smsHandler.setTargetUrl(null);
+        smsHandler.addToSocialSDK();
+        // 添加email
+        EmailHandler emailHandler = new EmailHandler();
+        emailHandler.addToSocialSDK();
+
+        mController.openShare(this,false);
+
     }
 
 }

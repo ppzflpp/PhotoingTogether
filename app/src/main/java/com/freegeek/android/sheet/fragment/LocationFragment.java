@@ -62,6 +62,7 @@ public class LocationFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.fragment_location, container, false);
+        setView(view);
         mSheetMyMaterialList = (MyMaterialList) view.findViewById(R.id.list_sheet);
         refreshList();
         return view;
@@ -72,6 +73,7 @@ public class LocationFragment extends BaseFragment {
         UserService.getInstance().getNearbySheet(new FindListener<Sheet>() {
             @Override
             public void onSuccess(List<Sheet> sheets) {
+                if(sheets.size() > 0) findViewById(R.id.linear_tip_location).setVisibility(View.GONE);
                 for (Sheet sheet : sheets) {
                     if(LocationService.location == null || sheet.getLocation() == null) continue;
                     LatLng myLocation = new LatLng(LocationService.location.getLatitude(),LocationService.location.getLongitude());
@@ -110,6 +112,7 @@ public class LocationFragment extends BaseFragment {
                                             @Override
                                             public void onSuccess() {
                                                 sheetCardProvider.setLike(false);
+                                                mSheetMyMaterialList.getAdapter().notifyDataSetChanged();
                                             }
 
                                             @Override
@@ -123,6 +126,7 @@ public class LocationFragment extends BaseFragment {
                                             @Override
                                             public void onSuccess() {
                                                 sheetCardProvider.setLike(true);
+                                                mSheetMyMaterialList.getAdapter().notifyDataSetChanged();
                                             }
 
                                             @Override
