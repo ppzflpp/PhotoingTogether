@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.freegeek.android.sheet.MainActivity;
@@ -50,56 +51,35 @@ import de.greenrobot.event.EventBus;
 public class SheetShotActivity extends BaseActivity {
     public static String KEY_SHEET = "sheet";
     public static String KEY_POSITION = "position";
-    private ImageView mImgSheet;
     private Sheet mSheet;
-    private ImageView mLikeImageView;
-    private TextView mLikeNumberTextView;
-    private TextView mCommentNumberTextView;
-    private RecyclerView mListCommentRecyclerView;
-    private LinearLayout mLikeLinearLayout;
-    private TextView mContentTextView;
-    private CircularImageView mAvatarCircularImageView;
-    private TextInputLayout mCommentTextInputLayout;
-    private ImageButton mPostCommentImageButton;
-    private EditText mCommentEditText;
+
 
     private List<Comment> mComments = new ArrayList<>();
     private CommentAdapter mCommentAdapter;
+    private ImageView mLikeImageView;
+    private TextView mLikeNumberTextView;
+    private CircularImageView mAvatarCircularImageView;
+    private TextView mContentTextView;
+    private TextInputLayout mCommentTextInputLayout;
+    private ImageButton mPostCommentImageButton;
+    private ListView mListView;
+    private EditText mCommentEditText;
+    private TextView mCommentNumberTextView;
+    private ImageView mPictureImageView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sheet_shot);
-        mAvatarCircularImageView = (CircularImageView) findViewById(R.id.img_avatar);
-        mContentTextView = (TextView) findViewById(R.id.txt_content);
         mLikeImageView = (ImageView) findViewById(R.id.img_like);
         mLikeNumberTextView = (TextView) findViewById(R.id.txt_like_number);
-        mLikeLinearLayout = (LinearLayout) findViewById(R.id.linear_like);
-        mCommentNumberTextView = (TextView) findViewById(R.id.txt_right_content);
+        mAvatarCircularImageView = (CircularImageView) findViewById(R.id.img_avatar);
+        mContentTextView = (TextView) findViewById(R.id.txt_content);
         mCommentTextInputLayout = (TextInputLayout) findViewById(R.id.input_comment);
         mPostCommentImageButton = (ImageButton) findViewById(R.id.btn_post_comment);
-        mListCommentRecyclerView = (RecyclerView) findViewById(R.id.list_comment);
-
-        mContentTextView = (TextView) findViewById(R.id.txt_content);
-        mAvatarCircularImageView = (CircularImageView) findViewById(R.id.img_avatar);
-        mLikeImageView = (ImageView) findViewById(R.id.img_like);
-        mLikeNumberTextView = (TextView) findViewById(R.id.txt_like_number);
-        mLikeLinearLayout = (LinearLayout) findViewById(R.id.linear_like);
-        mCommentNumberTextView = (TextView) findViewById(R.id.txt_right_content);
-        mListCommentRecyclerView = (RecyclerView) findViewById(R.id.list_comment);
-
-
-        mLikeImageView = (ImageView) findViewById(R.id.img_like);
-        mLikeNumberTextView = (TextView) findViewById(R.id.txt_like_number);
-        mLikeLinearLayout = (LinearLayout) findViewById(R.id.linear_like);
-        mCommentNumberTextView = (TextView) findViewById(R.id.txt_right_content);
-        mListCommentRecyclerView = (RecyclerView) findViewById(R.id.list_comment);
-        mLikeImageView = (ImageView) findViewById(R.id.img_like);
-        mLikeNumberTextView = (TextView) findViewById(R.id.txt_like_number);
-        mCommentNumberTextView = (TextView) findViewById(R.id.txt_right_content);
-        mListCommentRecyclerView = (RecyclerView) findViewById(R.id.list_comment);
-        mImgSheet = (ImageView)findViewById(R.id.img_sheet);
+        mListView = (ListView)findViewById(R.id.list_comment);
         mCommentEditText = mCommentTextInputLayout.getEditText();
-
+        mCommentNumberTextView = (TextView) findViewById(R.id.txt_comment_number);
+        mPictureImageView = (ImageView) findViewById(R.id.img_sheet);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
@@ -114,7 +94,7 @@ public class SheetShotActivity extends BaseActivity {
         mSheet =(Sheet) getIntent().getExtras().getSerializable(KEY_SHEET);
 
         //初始化信息
-        Picasso.with(this).load(mSheet.getPicture().getFileUrl(this)).error(R.drawable.header_bg).into(mImgSheet);
+        Picasso.with(this).load(mSheet.getPicture().getFileUrl(this)).error(R.drawable.header_bg).into(mPictureImageView);
         if( mSheet.getAuthor().getAvatar() !=null) Picasso.with(this)
                 .load(mSheet.getAuthor().getAvatar().getFileUrl(this))
                 .error(R.drawable.avatar)
@@ -126,17 +106,18 @@ public class SheetShotActivity extends BaseActivity {
         mCommentTextInputLayout.setCounterEnabled(true);
         mCommentTextInputLayout.setCounterMaxLength(140);
 
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        mListCommentRecyclerView.setLayoutManager(layoutManager);
-        mCommentAdapter = new CommentAdapter(mComments);
-        mListCommentRecyclerView.setAdapter(mCommentAdapter);
-        //设置Item增加、移除动画
-        mListCommentRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mCommentAdapter = new CommentAdapter(mComments,getActivity());
+        mListView.setAdapter(mCommentAdapter);
 
-        mLikeLinearLayout.setOnClickListener(new View.OnClickListener() {
+        //隐藏提示
+        if(sp.getBoolean(APP.KEY.TIP_DRAG,false)){
+           findViewById(R.id.txt_tip_drag).setVisibility(View.GONE);
+        }
+
+        findViewById(R.id.linear_like).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(getCurrentUser() == null) BaseActivity.showLoginTip(SheetShotActivity.this);
+                if (getCurrentUser() == null) BaseActivity.showLoginTip(SheetShotActivity.this);
                 if (mSheet.getLiker().contains(getCurrentUser().getObjectId())) {
                     UserService.getInstance().removeLikeSheet(mSheet, new UpdateListener() {
                         @Override
@@ -146,7 +127,7 @@ public class SheetShotActivity extends BaseActivity {
 
                         @Override
                         public void onFailure(int i, String s) {
-                               EventLog.BmobToastError(i,s, getActivity());
+                            EventLog.BmobToastError(i, s, getActivity());
                         }
                     });
 
@@ -159,7 +140,7 @@ public class SheetShotActivity extends BaseActivity {
 
                         @Override
                         public void onFailure(int i, String s) {
-                               EventLog.BmobToastError(i,s, getActivity());
+                            EventLog.BmobToastError(i, s, getActivity());
                         }
                     });
                 }
@@ -183,13 +164,13 @@ public class SheetShotActivity extends BaseActivity {
                         public void onSuccess(Object o) {
                             mComments.add(0, (Comment) o);
                             mCommentNumberTextView.setText(String.valueOf(mComments.size()));
-                            mCommentAdapter.notifyItemInserted(0);
+                            mCommentAdapter.notifyDataSetChanged();
                             dismissLoading();
                         }
 
                         @Override
                         public void onFailure(int i, String s) {
-                               EventLog.BmobToastError(i,s, getActivity());
+                            EventLog.BmobToastError(i, s, getActivity());
                             dismissLoading();
                         }
                     });
@@ -202,12 +183,21 @@ public class SheetShotActivity extends BaseActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), MainActivity.class);
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("user",mSheet.getAuthor());
+                bundle.putSerializable("user", mSheet.getAuthor());
                 intent.putExtras(bundle);
                 intent.setAction(APP.ACTION.MAIN_ACTIVITY_FRAGMENT_PROFILE);
                 startActivity(intent);
             }
         });
+
+        findViewById(R.id.linear_share).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                share(mSheet.getContent(), mSheet.getPicture().getFileUrl(getActivity()));
+            }
+        });
+
+        if(!sp.getBoolean(APP.KEY.TIP_DRAG,false))spe.putBoolean(APP.KEY.TIP_DRAG,true).commit();
     }
 
     @Override
