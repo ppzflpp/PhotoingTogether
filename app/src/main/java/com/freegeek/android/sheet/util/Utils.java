@@ -2,6 +2,7 @@ package com.freegeek.android.sheet.util;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.WindowManager;
@@ -54,4 +55,27 @@ public class Utils  {
 
 //-------------------------------------获取屏幕宽高-----END-----------------------------------------------
 
+    /**
+     * 判断是否是平板
+     * @param context
+     * @return
+     */
+    public static boolean isTablet(Context context) {
+        return (context.getResources().getConfiguration().screenLayout
+                & Configuration.SCREENLAYOUT_SIZE_MASK)
+                >= Configuration.SCREENLAYOUT_SIZE_LARGE;
+    }
+
+    /**
+     * 判断是否是竖屏
+     * @param context
+     * @return
+     */
+    public static boolean isPortrait(Context context) {
+        if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
+        {
+            return false;
+        }
+        return false;
+    }
 }

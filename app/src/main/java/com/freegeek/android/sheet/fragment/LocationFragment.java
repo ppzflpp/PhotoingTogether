@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.model.LatLng;
@@ -40,7 +41,7 @@ public class LocationFragment extends BaseFragment {
 
 
     private MyMaterialList mSheetMyMaterialList;
-
+    private LinearLayout mTipLinearLayout;
     public LocationFragment() {
         // Required empty public constructor
     }
@@ -53,7 +54,7 @@ public class LocationFragment extends BaseFragment {
     public void onEvent(Event event){
         switch (event.getEventCode()){
             case Event.EVENT_GET_LOCATION:
-                refreshList();
+                if(isShowing())refreshList();
                 break;
         }
     }
@@ -64,6 +65,7 @@ public class LocationFragment extends BaseFragment {
         View view =  inflater.inflate(R.layout.fragment_location, container, false);
         setView(view);
         mSheetMyMaterialList = (MyMaterialList) view.findViewById(R.id.list_sheet);
+        mTipLinearLayout = (LinearLayout) view.findViewById(R.id.linear_tip_location);
         refreshList();
         return view;
     }
@@ -73,7 +75,7 @@ public class LocationFragment extends BaseFragment {
         UserService.getInstance().getNearbySheet(new FindListener<Sheet>() {
             @Override
             public void onSuccess(List<Sheet> sheets) {
-                if(sheets.size() > 0) findViewById(R.id.linear_tip_location).setVisibility(View.GONE);
+                if(sheets.size() > 0) mTipLinearLayout.setVisibility(View.GONE);
                 for (Sheet sheet : sheets) {
                     if(LocationService.location == null || sheet.getLocation() == null) continue;
                     LatLng myLocation = new LatLng(LocationService.location.getLatitude(),LocationService.location.getLongitude());

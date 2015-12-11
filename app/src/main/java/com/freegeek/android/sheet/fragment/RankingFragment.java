@@ -21,6 +21,8 @@ import com.freegeek.android.sheet.ui.MyMaterialList;
 import com.freegeek.android.sheet.ui.SheetCardProvider;
 import com.freegeek.android.sheet.util.EventLog;
 import com.freegeek.android.sheet.util.SheetComparator;
+import com.freegeek.android.sheet.util.Utils;
+import com.orhanobut.logger.Logger;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 
@@ -38,6 +40,9 @@ public class RankingFragment extends BaseFragment {
 
     private MyMaterialList mSheetMyMaterialList;
     private LinearLayoutManager linearLayoutManager;
+    private StaggeredGridLayoutManager staggeredGridLayoutManager;
+    private boolean isTable = false;
+    private boolean isPortrait = false;
     public RankingFragment() {
         // Required empty public constructor
     }
@@ -53,10 +58,20 @@ public class RankingFragment extends BaseFragment {
     }
 
     public void init(View view){
-        linearLayoutManager = new LinearLayoutManager(getContext());
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+
+        isTable = Utils.isTablet(getActivity());
+        isPortrait = Utils.isPortrait(getActivity());
+        Logger.i("isTable:" + isTable +"  isPortrait:" +isPortrait);
         mSheetMyMaterialList = (MyMaterialList) view.findViewById(R.id.list_sheet);
-        mSheetMyMaterialList.getRecyclerView().setLayoutManager(linearLayoutManager);
+        if(isTable || !isPortrait){
+            staggeredGridLayoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
+            mSheetMyMaterialList.getRecyclerView().setLayoutManager(staggeredGridLayoutManager);
+        }else{
+            linearLayoutManager = new LinearLayoutManager(getContext());
+            linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+            mSheetMyMaterialList.getRecyclerView().setLayoutManager(linearLayoutManager);
+        }
+
         BmobQuery<Sheet> bmobQuery = new BmobQuery<>();
         bmobQuery.include("author");
         bmobQuery.setLimit(10);
@@ -64,7 +79,7 @@ public class RankingFragment extends BaseFragment {
             @Override
             public void onSuccess(final List<Sheet> sheets) {
                 SheetComparator sheetComparator = new SheetComparator();
-                Collections.sort(sheets,sheetComparator);
+                Collections.sort(sheets, sheetComparator);
                 for (final Sheet sheet : sheets) {
                     Card card = new Card.Builder(getActivity())
                             .setTag("SHEET_RANKING_CARD")
@@ -132,7 +147,12 @@ public class RankingFragment extends BaseFragment {
                             .endConfig()
                             .build();
                     mSheetMyMaterialList.getAdapter().add(card);
-                    linearLayoutManager.scrollToPosition(0);
+
+                     if(isTable || !isPortrait)   {
+                         staggeredGridLayoutManager.scrollToPosition(0);
+                     }else{
+                         linearLayoutManager.scrollToPosition(0);
+                     }
 
                 }
 
@@ -140,7 +160,7 @@ public class RankingFragment extends BaseFragment {
 
             @Override
             public void onError(int code, String msg) {
-                EventLog.BmobToastError(code, msg,getActivity());
+                EventLog.BmobToastError(code, msg, getActivity());
             }
         });
     }

@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.dexafree.materialList.card.Card;
 import com.dexafree.materialList.card.CardProvider;
@@ -74,6 +75,7 @@ public class SheetFragment extends BaseFragment {
     }
 
     private MyMaterialList mListView;
+    private LinearLayout mLinearLayout;
     private void initView(View view){
         MyFab fab = (MyFab) view.findViewById(R.id.fab);
         View sheetView = view.findViewById(R.id.fab_sheet);
@@ -82,7 +84,7 @@ public class SheetFragment extends BaseFragment {
         int fabColor = getResources().getColor(R.color.material_blue);
         materialSheetFab = new MaterialSheetFab<>(fab, sheetView, overlay,
                 sheetColor, fabColor);
-
+        mLinearLayout = (LinearLayout) view.findViewById(R.id.linear_tip);
         materialSheetFab.setEventListener(new MaterialSheetFabEventListener() {
             @Override
             public void onShowSheet() {
@@ -137,9 +139,9 @@ public class SheetFragment extends BaseFragment {
             @Override
             public void onSuccess(List<Sheet> sheets) {
                 if (sheets.size() == 0) {
-                    findViewById(R.id.linear_tip).setVisibility(View.VISIBLE);
+                    mLinearLayout.setVisibility(View.VISIBLE);
                 } else {
-                    findViewById(R.id.linear_tip).setVisibility(View.GONE);
+                    mLinearLayout.setVisibility(View.GONE);
                     for (Sheet sheet : sheets) {
                         Card card = new Card.Builder(getActivity())
                                 .setTag("SHEET_CARD")
