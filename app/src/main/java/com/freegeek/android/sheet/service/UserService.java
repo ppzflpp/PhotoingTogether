@@ -52,9 +52,6 @@ public class UserService {
         user = BmobUser.getCurrentUser(mContext,User.class);
     }
 
-    public void updateUser(){
-
-    }
 
     /**
      * 添加喜欢的图片
@@ -112,13 +109,7 @@ public class UserService {
                 saveListener.onFailure(i, s);
             }
         });
-        if(checkLogin()){
-            Logger.i("USER HAD ALREADY LOGIN!");
-            return;
-        }
-        BmobUser.logOut(mContext);
-        user = null;
-        EventBus.getDefault().post(new Event(Event.EVENT_USER_SIGN_OUT));
+
     }
 
 
@@ -135,26 +126,6 @@ public class UserService {
         EventBus.getDefault().post(new Event(Event.EVENT_USER_SIGN_OUT));
     }
 
-
-    public void refreshLikeSheet(){
-        // 查询喜欢这个帖子的所有用户，因此查询的是用户表
-        BmobQuery<User> query = new BmobQuery<User>();
-        Sheet sheet = new Sheet();
-//likes是Post表中的字段，用来存储所有喜欢该帖子的用户
-        query.addWhereRelatedTo("likes", new BmobPointer(sheet));
-        query.findObjects(mContext, new FindListener<User>() {
-
-            @Override
-            public void onSuccess(List<User> object) {
-                // TODO Auto-generated method stub
-                object.size();
-            }
-
-            @Override
-            public void onError(int code, String msg) {
-            }
-        });
-    }
 
 
     /**

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">美丽拍</string>
+    <string name="app_name">一起拍</string>
     <string name="error_data">数据异常</string>
     <string name="error_email_used">邮箱已被使用</string>
     <string name="error_mail_format">邮箱格式不正确</string>

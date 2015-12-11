@@ -181,6 +181,7 @@
             </LinearLayout>
 
             <ListView
+                android:divider="@null"
                 android:scrollbars="vertical"
                 android:id="@+id/list_comment"
                 android:layout_width="match_parent"

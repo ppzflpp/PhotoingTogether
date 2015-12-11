@@ -1,4 +1,4 @@
-package com.freegeek.android.sheet;
+package com.freegeek.android.sheet.activity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -13,8 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.baidu.location.BDLocation;
-import com.freegeek.android.sheet.activity.BaseActivity;
-import com.freegeek.android.sheet.activity.PickLocationActivity;
+import com.freegeek.android.sheet.R;
 import com.freegeek.android.sheet.bean.Event;
 import com.freegeek.android.sheet.bean.User;
 import com.freegeek.android.sheet.fragment.BaseFragment;
@@ -38,7 +37,6 @@ import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
-import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.orhanobut.logger.Logger;
@@ -48,7 +46,6 @@ import com.squareup.picasso.Target;
 
 import java.io.File;
 
-import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.listener.UpdateListener;
 import cn.bmob.v3.listener.UploadFileListener;
@@ -65,7 +62,7 @@ public class MainActivity extends BaseActivity {
     private FollowFragment mFollowFragment;
     private LikeSheetFragment mLikeSheetFragment;
     private PostSheetDialog mPostSheetDialog;
-    private IProfile iProfile;
+    private IProfile mIProfile;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,7 +70,6 @@ public class MainActivity extends BaseActivity {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mToolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
         setSupportActionBar(mToolbar);
-
 
         initFragments();
         initDrawerNavigation();
@@ -85,7 +81,6 @@ public class MainActivity extends BaseActivity {
         }
 
         LocationService.getInstance(this).getLocation();
-        UserService.getInstance().refreshLikeSheet();
 
     }
 
@@ -102,13 +97,13 @@ public class MainActivity extends BaseActivity {
      * 初始化抽屉导航
      */
     private void initDrawerNavigation() {
-        iProfile = new ProfileDrawerItem().withName(getString(R.string.not_logined_in))
+        mIProfile = new ProfileDrawerItem().withName(getString(R.string.not_logined_in))
                 .withEmail(getString(R.string.tab_here_get_more_fun))
                 .withIcon(getResources().getDrawable(R.drawable.avatar));
         mHeaderResult = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withHeaderBackground(R.drawable.header_bg)
-                .addProfiles(iProfile)
+                .addProfiles(mIProfile)
                 .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
                     @Override
                     public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
@@ -205,15 +200,15 @@ public class MainActivity extends BaseActivity {
 
     private void refreshUser(){
         if(getCurrentUser() !=null){
-            iProfile.withName(getCurrentUser().getNick());
-            iProfile.withEmail(getCurrentUser().getEmail());
-            iProfile.withIcon(getResources().getDrawable(R.drawable.avatar));
+            mIProfile.withName(getCurrentUser().getNick());
+            mIProfile.withEmail(getCurrentUser().getEmail());
+            mIProfile.withIcon(getResources().getDrawable(R.drawable.avatar));
             if(getCurrentUser().getAvatar() != null ){
                 Picasso.with(this).load(getCurrentUser().getAvatar().getFileUrl(this)).error(R.drawable.avatar).into(new Target() {
                     @Override
                     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                        iProfile.withIcon(bitmap);
-                        mHeaderResult.updateProfile(iProfile);
+                        mIProfile.withIcon(bitmap);
+                        mHeaderResult.updateProfile(mIProfile);
                     }
 
                     @Override
@@ -228,11 +223,11 @@ public class MainActivity extends BaseActivity {
                 });
             }
         }else{
-            iProfile.withName(getString(R.string.not_logined_in));
-            iProfile.withEmail(getString(R.string.tab_here_get_more_fun));
-            iProfile.withIcon(getResources().getDrawable(R.drawable.avatar));
+            mIProfile.withName(getString(R.string.not_logined_in));
+            mIProfile.withEmail(getString(R.string.tab_here_get_more_fun));
+            mIProfile.withIcon(getResources().getDrawable(R.drawable.avatar));
         }
-        mHeaderResult.updateProfile(iProfile);
+        mHeaderResult.updateProfile(mIProfile);
     }
 
     private void login(){

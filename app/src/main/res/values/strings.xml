@@ -36,7 +36,7 @@
     <string name="error_password_different">Inconsistent password</string>
     <string name="follow">Follow</string>
     <string name="gallery">Gallery</string>
-    <string name="tip_add_picture">空空如也,点击按钮，开启精彩</string>
+    <string name="tip_add_picture">空空如也，点击按钮，开启精彩</string>
     <string name="umeng_socialize_text_weixin_key">Wechat</string>
     <string name="ranking_list">Ranking list</string>
     <string name="refresh">Refresh</string>
@@ -57,5 +57,5 @@
     <string name="profile">Profile</string>
     <string name="homepage">Homepage</string>
     <string name="input_your_email">Email</string>
-    <string name="forget_password">Forget password?</string>
+    <string name="forget_password">Forgot password?</string>
 </resources>

@@ -2,11 +2,7 @@ package com.freegeek.android.sheet.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TextInputLayout;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -15,14 +11,11 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.freegeek.android.sheet.MainActivity;
 import com.freegeek.android.sheet.R;
 import com.freegeek.android.sheet.bean.Comment;
-import com.freegeek.android.sheet.bean.Event;
 import com.freegeek.android.sheet.bean.Sheet;
 import com.freegeek.android.sheet.service.UserService;
 import com.freegeek.android.sheet.ui.adapter.CommentAdapter;
@@ -38,7 +31,6 @@ import java.util.List;
 import cn.bmob.v3.listener.DeleteListener;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.UpdateListener;
-import de.greenrobot.event.EventBus;
 
 /**
  * Created by rtugeek on 2015-12-02
