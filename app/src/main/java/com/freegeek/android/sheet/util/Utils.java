@@ -74,7 +74,7 @@ public class Utils  {
     public static boolean isPortrait(Context context) {
         if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
         {
-            return false;
+            return true;
         }
         return false;
     }
