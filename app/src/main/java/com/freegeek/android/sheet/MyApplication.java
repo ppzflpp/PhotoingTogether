@@ -8,6 +8,7 @@ import com.freegeek.android.sheet.util.APP;
 import com.orhanobut.logger.LogLevel;
 import com.orhanobut.logger.Logger;
 import com.umeng.analytics.AnalyticsConfig;
+import com.umeng.socialize.common.SocializeConstants;
 
 import cn.bmob.v3.Bmob;
 
@@ -25,6 +26,7 @@ public class MyApplication extends Application {
 
         //友盟数据统计
         AnalyticsConfig.setAppkey(this, APP.STRING.APP_KEY_UMENG);
+        SocializeConstants.APPKEY = APP.STRING.APP_KEY_UMENG;
 
         //使用时请将第二个参数Application ID替换成你在Bmob服务器端创建的Application ID
         Bmob.initialize(this, APP.STRING.APPLICATION_ID_BMOB);
@@ -32,9 +34,7 @@ public class MyApplication extends Application {
 
         //百度地图
         SDKInitializer.initialize(getApplicationContext());
-
     }
-
 
 
 }

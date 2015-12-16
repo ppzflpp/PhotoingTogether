@@ -6,7 +6,7 @@ package com.freegeek.android.sheet.util;
 public class APP {
     public static final class STRING {
         //
-        public static final String APP_KEY_UMENG = "525506e956240b383500cdf3";
+        public static final String APP_KEY_UMENG = "5638109a67e58e6dab002082";
         public static final String APPLICATION_ID_BMOB = "36a91330317c59a79812c9847aef4c03";
         public static final String APP_EN_NAME = "Sheet";
         public static final String APP_NAME = "一张";

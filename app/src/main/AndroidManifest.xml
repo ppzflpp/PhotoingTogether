@@ -32,10 +32,6 @@
             android:value="gnWY58GwzNFRE55nWucwsYAm" />
 
         <meta-data
-            android:name="UMENG_APPKEY"
-            android:value="5638109a67e58e6dab002082" />
-
-        <meta-data
             android:name="UMENG_CHANNEL"
             android:value="Channel ID" />
 

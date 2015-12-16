@@ -1,6 +1,7 @@
 package com.freegeek.android.sheet.service;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.baidu.location.BDLocation;
 import com.freegeek.android.sheet.bean.Comment;
@@ -204,7 +205,7 @@ public class UserService {
 
                 @Override
                 public void onFailure(int i, String s) {
-                    Logger.i(s);
+                    if(!TextUtils.isEmpty(s))Logger.i(s);
                 }
             });
         }

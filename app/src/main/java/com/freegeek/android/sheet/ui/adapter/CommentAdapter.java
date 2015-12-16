@@ -65,8 +65,9 @@ public class CommentAdapter extends BaseAdapter{
             viewHolder = (ViewHolder)convertView.getTag();
         }
         Comment comment = mComments.get(position);
+        User user = comment.getUser();
         viewHolder.setNick(comment.getUser().getNick());
-        viewHolder.setAvatar(comment.getUser().getAvatar().getFileUrl(parent.getContext()));
+        viewHolder.setAvatar(user.getAvatar() == null ? null : user.getAvatar().getFileUrl(parent.getContext()));
         viewHolder.setContent(comment.getContent());
         viewHolder.setDate(comment.getUpdatedAt());
         if(position == mComments.size() -1) viewHolder.setDividerVisibility(View.GONE);
@@ -94,6 +95,10 @@ public class CommentAdapter extends BaseAdapter{
         }
 
         public void setAvatar(String url){
+            if (TextUtils.isEmpty(url)){
+                Picasso.with(mContext).load(R.drawable.avatar).error(R.drawable.avatar).into(mAvatar);
+                return;
+            }
             Picasso.with(mContext).load(url).error(R.drawable.avatar).into(mAvatar);
         }
 
