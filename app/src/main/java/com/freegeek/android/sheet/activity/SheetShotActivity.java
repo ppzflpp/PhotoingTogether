@@ -1,6 +1,7 @@
 package com.freegeek.android.sheet.activity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.Toolbar;
@@ -22,6 +23,7 @@ import com.freegeek.android.sheet.ui.adapter.CommentAdapter;
 import com.freegeek.android.sheet.util.APP;
 import com.freegeek.android.sheet.util.EventLog;
 import com.github.siyamed.shapeimageview.CircularImageView;
+import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.rey.material.app.Dialog;
 import com.squareup.picasso.Picasso;
 
@@ -72,6 +74,7 @@ public class SheetShotActivity extends BaseActivity {
         mCommentEditText = mCommentTextInputLayout.getEditText();
         mCommentNumberTextView = (TextView) findViewById(R.id.txt_comment_number);
         mPictureImageView = (ImageView) findViewById(R.id.img_sheet);
+//
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
@@ -142,9 +145,9 @@ public class SheetShotActivity extends BaseActivity {
         mPostCommentImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(TextUtils.isEmpty(mCommentEditText.getText())){
+                if (TextUtils.isEmpty(mCommentEditText.getText())) {
                     mCommentTextInputLayout.setError(getString(R.string.alert_null_text));
-                }else {
+                } else {
                     mCommentTextInputLayout.setError("");
                     mCommentTextInputLayout.setHint(getString(R.string.comment));
                     Comment comment = new Comment();
@@ -190,6 +193,7 @@ public class SheetShotActivity extends BaseActivity {
         });
 
         if(!sp.getBoolean(APP.KEY.TIP_DRAG,false))spe.putBoolean(APP.KEY.TIP_DRAG,true).commit();
+
     }
 
     @Override
